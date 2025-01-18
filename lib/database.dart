@@ -21,6 +21,7 @@ class Operations extends Table {
   IntColumn get idOperation => integer().autoIncrement()();
   TextColumn get nomOperation => text()();
   IntColumn get prixOperation => integer()();
+  IntColumn get quantiteOperation => integer()();
   DateTimeColumn get dateOperation => dateTime()();
 }
 
@@ -42,7 +43,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 1;
 
   @override
   MigrationStrategy get migration {
@@ -51,9 +52,10 @@ class AppDatabase extends _$AppDatabase {
         await m.createAll();
       },
       onUpgrade: (Migrator m, int from, int to) async {
-        if (from < 3) {
-          await m.createTable(operations);
-        }
+        // if (from < 5) {
+        await m.createAll();
+        // }
+        // await m.createTable(operations);
       },
       beforeOpen: (details) async {
         if (kDebugMode) {}
@@ -68,10 +70,14 @@ class AppDatabase extends _$AppDatabase {
   // }
 
   Future<int> createOperation(
-      {required String nom, required int prix, DateTime? date}) {
+      {required String nom,
+      required int prix,
+      required int quantite,
+      DateTime? date}) {
     return into(operations).insert(OperationsCompanion.insert(
         nomOperation: nom,
         prixOperation: prix,
+        quantiteOperation: quantite,
         dateOperation: DateTime.timestamp()));
   }
 

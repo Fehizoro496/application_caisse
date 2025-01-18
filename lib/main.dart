@@ -1,34 +1,29 @@
-// Import necessary packages and files
 import 'package:application_caisse/history_page.dart';
 import 'package:application_caisse/view/input_form.dart';
-// import 'package:application_caisse/view/invoice_line_view.dart';
 import 'package:application_caisse/view/invoice_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import './controller.dart';
-// import './models.dart';
-import './database.dart';
+// import './database.dart';
+import './db_service.dart';
 
 // Main function to initialize the app
 void main() async {
   // Ensure widgets are initialized
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize the database
-  final database = AppDatabase();
 
-  // Insert a test operation into the database
-  await database.into(database.operations).insert(OperationsCompanion.insert(
-      nomOperation: "testFarany",
-      prixOperation: 00,
-      dateOperation: DateTime.timestamp()));
+  // Initialize the database
+  // final database = AppDatabase();
+
+  // Initialize the DBService
+  await Get.putAsync(() => DBService().init());
 
   // Retrieve all operations from the database
-  List<Operation> allOperations =
-      await database.select(database.operations).get();
+  // List<Operation> allOperations =
+  //     await database.select(database.operations).get();
 
   // Print the operations to the console
-  print('Operations in database: $allOperations');
+  // print('Operations in database: $allOperations');
 
   // Run the app
   runApp(const MyApp());
@@ -55,9 +50,12 @@ class MyApp extends StatelessWidget {
 
 // Main page widget
 class MainPage extends StatelessWidget {
-  MainPage({super.key});
   final String title = 'Flutter Demo Home Page';
-  final Controller c = Get.put(Controller());
+  late final Controller c;
+
+  MainPage({super.key}) {
+    c = Get.put(Controller());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,9 +118,9 @@ class MainPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               // Input form widget
-              InputForm(controller: c),
+              InputForm(),
               // Invoice list view widget
-              invoiceListView(c),
+              invoiceListView(),
             ],
           ),
         ),

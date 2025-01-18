@@ -5,8 +5,9 @@ import 'package:application_caisse/view/invoice_line_view.dart';
 import '../../controller.dart';
 import 'package:get/get.dart';
 
-Widget invoiceListView(Controller c) {
+Widget invoiceListView() {
   return GetBuilder<Controller>(builder: (context) {
+    Controller controller = Get.find<Controller>();
     return Container(
       height: 550,
       width: 400,
@@ -21,9 +22,9 @@ Widget invoiceListView(Controller c) {
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            itemCount: c.listInvoiceLine.length,
+            itemCount: controller.listInvoiceLine.length,
             itemBuilder: (context, index) =>
-                invoiceLineView(index, c.listInvoiceLine[index], c),
+                invoiceLineView(index, controller.listInvoiceLine[index]),
           ),
         ),
         Container(
@@ -41,7 +42,7 @@ Widget invoiceListView(Controller c) {
                   style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16.0),
                 ),
                 Text(
-                  '${c.total} Ar',
+                  '${controller.total} Ar',
                   style: const TextStyle(
                       fontWeight: FontWeight.w500, fontSize: 16.0),
                 )
@@ -49,7 +50,7 @@ Widget invoiceListView(Controller c) {
               const SizedBox(height: 10.0),
               ElevatedButton(
                   onPressed: () {
-                    c.save();
+                    controller.save();
                   },
                   style: ButtonStyle(
                     backgroundColor:

@@ -4,8 +4,8 @@ import '../models.dart';
 import '../controller.dart';
 
 class InputForm extends StatelessWidget {
-  InputForm({super.key, required this.controller});
-  final Controller controller;
+  InputForm({super.key});
+  final Controller controller = Get.find<Controller>();
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -76,16 +76,11 @@ class InputForm extends StatelessWidget {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       controller.addFactureLine(
-                        InvoiceLine(
-                          invoice: Invoice(
-                            date: DateTime.now(),
-                          ),
-                          service: ServiceModel(
-                              nameService:
-                                  controller.designationController.text,
-                              priceService:
-                                  int.parse(controller.priceController.text)),
-                          quantity:
+                        OperationModel(
+                          nomOperation: controller.designationController.text,
+                          prixOperation:
+                              int.parse(controller.priceController.text),
+                          quantiteOperation:
                               int.parse(controller.quantityController.text),
                         ),
                       );

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import '../models.dart';
 import '../controller.dart';
-// import 'package:get/get.dart';
+import 'package:get/get.dart';
 
-Widget invoiceLineView(int index, InvoiceLine invoiceLine, Controller c) {
+Widget invoiceLineView(int index, OperationModel operation) {
+  Controller controller = Get.find<Controller>();
   return ListTile(
-    title:
-        Text("${invoiceLine.service.nameService}\t x${invoiceLine.quantity}"),
+    title: Text("${operation.nomOperation}\t x${operation.quantiteOperation}"),
     trailing: Wrap(
       spacing: 4,
       children: [
         IconButton(
           onPressed: () {
-            c.modifyFactureLine(index);
+            controller.modifyFactureLine(index);
           },
           icon: const Icon(
             Icons.edit,
@@ -21,7 +21,7 @@ Widget invoiceLineView(int index, InvoiceLine invoiceLine, Controller c) {
         ),
         IconButton(
             onPressed: () {
-              c.removeFactureLine(index);
+              controller.removeFactureLine(index);
             },
             icon: const Icon(
               Icons.delete,
@@ -30,7 +30,7 @@ Widget invoiceLineView(int index, InvoiceLine invoiceLine, Controller c) {
       ],
     ),
     subtitle: Text(
-        "${(invoiceLine.service.priceService * invoiceLine.quantity).toString()} Ar"),
+        "${(operation.prixOperation * operation.quantiteOperation).toString()} Ar"),
     selected: false,
   );
 }
