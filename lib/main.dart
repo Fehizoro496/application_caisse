@@ -12,18 +12,8 @@ void main() async {
   // Ensure widgets are initialized
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize the database
-  // final database = AppDatabase();
-
   // Initialize the DBService
   await Get.putAsync(() => DBService().init());
-
-  // Retrieve all operations from the database
-  // List<Operation> allOperations =
-  //     await database.select(database.operations).get();
-
-  // Print the operations to the console
-  // print('Operations in database: $allOperations');
 
   // Run the app
   runApp(const MyApp());

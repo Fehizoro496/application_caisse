@@ -3,25 +3,28 @@ class OperationModel {
   late String nomOperation;
   late int quantiteOperation;
   late int prixOperation;
-  late DateTime dateOperation;
+  DateTime? dateOperation;
 
   OperationModel(
       {this.idOperation,
       required this.nomOperation,
       required this.quantiteOperation,
-      required this.prixOperation});
+      required this.prixOperation,
+      this.dateOperation});
 
   factory OperationModel.fromJson(Map<String, dynamic> json) => OperationModel(
       idOperation: json['idOperation'],
       nomOperation: json['nomOperation'],
       quantiteOperation: json['quantiteOperation'],
-      prixOperation: json['prixOperation']);
+      prixOperation: json['prixOperation'],
+      dateOperation: json['dateOperation']);
 
   Map<String, dynamic> toJson() => {
         'idOperation': idOperation,
         'nomOperation': nomOperation,
         'quantiteOperation': quantiteOperation,
-        'prixOperation': prixOperation
+        'prixOperation': prixOperation,
+        'dateOperation': dateOperation
       };
 
   @override

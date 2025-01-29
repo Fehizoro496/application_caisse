@@ -5,7 +5,7 @@ import './database.dart';
 import './db_service.dart';
 // import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
 class Controller extends GetxController {
@@ -33,7 +33,7 @@ class Controller extends GetxController {
       "Enregistrement effectué avec succès!",
       snackPosition: SnackPosition.TOP,
       margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 70.0),
-      backgroundColor: const Color.fromARGB(100, 0, 255, 0),
+      backgroundColor: const Color.fromARGB(175, 0, 225, 0),
       colorText: Colors.white,
     );
   }
@@ -102,7 +102,7 @@ class Controller extends GetxController {
         'Aucune opération à enregistrer!',
         snackPosition: SnackPosition.TOP,
         margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 70.0),
-        backgroundColor: const Color.fromARGB(100, 255, 0, 0),
+        backgroundColor: const Color.fromARGB(175, 255, 0, 0),
         colorText: Colors.white,
       );
     } else {
@@ -153,28 +153,43 @@ class Controller extends GetxController {
         build: (pw.Context context) {
           return pw.Column(
             children: [
-              pw.Text('Facture', style: const pw.TextStyle(fontSize: 24)),
+              pw.Text('FACTURE', style: const pw.TextStyle(fontSize: 24)),
               pw.SizedBox(height: 20),
               pw.TableHelper.fromTextArray(
-                cellAlignments: {
+                headerAlignment: pw.Alignment.center,
+                columnWidths: const {
+                  0: pw.FractionColumnWidth(0.35),
+                  1: pw.FractionColumnWidth(0.2),
+                  2: pw.FractionColumnWidth(0.2),
+                  3: pw.FractionColumnWidth(0.25),
+                },
+                cellAlignments: const {
                   0: pw.Alignment.centerLeft,
                   1: pw.Alignment.center,
                   2: pw.Alignment.center,
                   3: pw.Alignment.centerRight,
                 },
-                headers: ['Désignation', 'Quantité', 'PU', 'Total'],
+                headers: ['Désignation', 'Quantité', 'PU (en Ar)', 'Total'],
                 data: listInvoiceLine.map((operation) {
                   return [
                     operation.nomOperation,
                     operation.quantiteOperation.toString(),
                     operation.prixOperation.toString(),
-                    (operation.quantiteOperation * operation.prixOperation)
-                        .toString()
+                    "${operation.quantiteOperation * operation.prixOperation} Ar"
                   ];
                 }).toList(),
               ),
-              pw.SizedBox(),
-              pw.Text('Total: $total', style: const pw.TextStyle(fontSize: 18)),
+              pw.SizedBox(height: 20),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.SizedBox(),
+                  pw.Text(
+                    'Total: $total Ar',
+                    style: const pw.TextStyle(fontSize: 18),
+                  ),
+                ],
+              ),
             ],
           );
         },
@@ -194,7 +209,7 @@ class Controller extends GetxController {
       'Invoice PDF has been generated successfully!',
       snackPosition: SnackPosition.TOP,
       margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 70.0),
-      backgroundColor: const Color.fromARGB(100, 0, 255, 0),
+      backgroundColor: Color.fromARGB(175, 0, 225, 0),
       colorText: Colors.white,
     );
     clearInvoiceList();
