@@ -21,7 +21,7 @@ class Operations extends Table {
 
 class Factures extends Table {
   IntColumn get idFacture => integer().autoIncrement()();
-  TextColumn get nomClient => text()();
+  TextColumn get client => text()();
   IntColumn get fournisseur =>
       integer().references(Utilisateurs, #idUtilisateur)();
   DateTimeColumn get dateFacture => dateTime()();

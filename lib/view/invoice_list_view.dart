@@ -50,7 +50,7 @@ Widget invoiceListView() {
               const SizedBox(height: 10.0),
               ElevatedButton(
                   onPressed: () {
-                    controller.save();
+                    controller.saveOperations();
                   },
                   style: ButtonStyle(
                     backgroundColor:

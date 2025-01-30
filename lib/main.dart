@@ -1,4 +1,5 @@
 import 'package:application_caisse/history_page.dart';
+// import 'package:application_caisse/invoice_service.dart';
 import 'package:application_caisse/view/input_form.dart';
 import 'package:application_caisse/view/invoice_list_view.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ void main() async {
 
   // Initialize the DBService
   await Get.putAsync(() => DBService().init());
+  // Get.put(() => InvoiceService().init());
 
   // Run the app
   runApp(const MyApp());

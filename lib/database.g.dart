@@ -251,11 +251,10 @@ class $FacturesTable extends Factures with TableInfo<$FacturesTable, Facture> {
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _nomClientMeta =
-      const VerificationMeta('nomClient');
+  static const VerificationMeta _clientMeta = const VerificationMeta('client');
   @override
-  late final GeneratedColumn<String> nomClient = GeneratedColumn<String>(
-      'nom_client', aliasedName, false,
+  late final GeneratedColumn<String> client = GeneratedColumn<String>(
+      'client', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _fournisseurMeta =
       const VerificationMeta('fournisseur');
@@ -274,7 +273,7 @@ class $FacturesTable extends Factures with TableInfo<$FacturesTable, Facture> {
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns =>
-      [idFacture, nomClient, fournisseur, dateFacture];
+      [idFacture, client, fournisseur, dateFacture];
   @override
   String get aliasedName => _alias ?? 'factures';
   @override
@@ -288,11 +287,11 @@ class $FacturesTable extends Factures with TableInfo<$FacturesTable, Facture> {
       context.handle(_idFactureMeta,
           idFacture.isAcceptableOrUnknown(data['id_facture']!, _idFactureMeta));
     }
-    if (data.containsKey('nom_client')) {
-      context.handle(_nomClientMeta,
-          nomClient.isAcceptableOrUnknown(data['nom_client']!, _nomClientMeta));
+    if (data.containsKey('client')) {
+      context.handle(_clientMeta,
+          client.isAcceptableOrUnknown(data['client']!, _clientMeta));
     } else if (isInserting) {
-      context.missing(_nomClientMeta);
+      context.missing(_clientMeta);
     }
     if (data.containsKey('fournisseur')) {
       context.handle(
@@ -321,8 +320,8 @@ class $FacturesTable extends Factures with TableInfo<$FacturesTable, Facture> {
     return Facture(
       idFacture: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id_facture'])!,
-      nomClient: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}nom_client'])!,
+      client: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}client'])!,
       fournisseur: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}fournisseur'])!,
       dateFacture: attachedDatabase.typeMapping
@@ -338,19 +337,19 @@ class $FacturesTable extends Factures with TableInfo<$FacturesTable, Facture> {
 
 class Facture extends DataClass implements Insertable<Facture> {
   final int idFacture;
-  final String nomClient;
+  final String client;
   final int fournisseur;
   final DateTime dateFacture;
   const Facture(
       {required this.idFacture,
-      required this.nomClient,
+      required this.client,
       required this.fournisseur,
       required this.dateFacture});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id_facture'] = Variable<int>(idFacture);
-    map['nom_client'] = Variable<String>(nomClient);
+    map['client'] = Variable<String>(client);
     map['fournisseur'] = Variable<int>(fournisseur);
     map['date_facture'] = Variable<DateTime>(dateFacture);
     return map;
@@ -359,7 +358,7 @@ class Facture extends DataClass implements Insertable<Facture> {
   FacturesCompanion toCompanion(bool nullToAbsent) {
     return FacturesCompanion(
       idFacture: Value(idFacture),
-      nomClient: Value(nomClient),
+      client: Value(client),
       fournisseur: Value(fournisseur),
       dateFacture: Value(dateFacture),
     );
@@ -370,7 +369,7 @@ class Facture extends DataClass implements Insertable<Facture> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Facture(
       idFacture: serializer.fromJson<int>(json['idFacture']),
-      nomClient: serializer.fromJson<String>(json['nomClient']),
+      client: serializer.fromJson<String>(json['client']),
       fournisseur: serializer.fromJson<int>(json['fournisseur']),
       dateFacture: serializer.fromJson<DateTime>(json['dateFacture']),
     );
@@ -380,7 +379,7 @@ class Facture extends DataClass implements Insertable<Facture> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'idFacture': serializer.toJson<int>(idFacture),
-      'nomClient': serializer.toJson<String>(nomClient),
+      'client': serializer.toJson<String>(client),
       'fournisseur': serializer.toJson<int>(fournisseur),
       'dateFacture': serializer.toJson<DateTime>(dateFacture),
     };
@@ -388,12 +387,12 @@ class Facture extends DataClass implements Insertable<Facture> {
 
   Facture copyWith(
           {int? idFacture,
-          String? nomClient,
+          String? client,
           int? fournisseur,
           DateTime? dateFacture}) =>
       Facture(
         idFacture: idFacture ?? this.idFacture,
-        nomClient: nomClient ?? this.nomClient,
+        client: client ?? this.client,
         fournisseur: fournisseur ?? this.fournisseur,
         dateFacture: dateFacture ?? this.dateFacture,
       );
@@ -401,7 +400,7 @@ class Facture extends DataClass implements Insertable<Facture> {
   String toString() {
     return (StringBuffer('Facture(')
           ..write('idFacture: $idFacture, ')
-          ..write('nomClient: $nomClient, ')
+          ..write('client: $client, ')
           ..write('fournisseur: $fournisseur, ')
           ..write('dateFacture: $dateFacture')
           ..write(')'))
@@ -409,46 +408,45 @@ class Facture extends DataClass implements Insertable<Facture> {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(idFacture, nomClient, fournisseur, dateFacture);
+  int get hashCode => Object.hash(idFacture, client, fournisseur, dateFacture);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Facture &&
           other.idFacture == this.idFacture &&
-          other.nomClient == this.nomClient &&
+          other.client == this.client &&
           other.fournisseur == this.fournisseur &&
           other.dateFacture == this.dateFacture);
 }
 
 class FacturesCompanion extends UpdateCompanion<Facture> {
   final Value<int> idFacture;
-  final Value<String> nomClient;
+  final Value<String> client;
   final Value<int> fournisseur;
   final Value<DateTime> dateFacture;
   const FacturesCompanion({
     this.idFacture = const Value.absent(),
-    this.nomClient = const Value.absent(),
+    this.client = const Value.absent(),
     this.fournisseur = const Value.absent(),
     this.dateFacture = const Value.absent(),
   });
   FacturesCompanion.insert({
     this.idFacture = const Value.absent(),
-    required String nomClient,
+    required String client,
     required int fournisseur,
     required DateTime dateFacture,
-  })  : nomClient = Value(nomClient),
+  })  : client = Value(client),
         fournisseur = Value(fournisseur),
         dateFacture = Value(dateFacture);
   static Insertable<Facture> custom({
     Expression<int>? idFacture,
-    Expression<String>? nomClient,
+    Expression<String>? client,
     Expression<int>? fournisseur,
     Expression<DateTime>? dateFacture,
   }) {
     return RawValuesInsertable({
       if (idFacture != null) 'id_facture': idFacture,
-      if (nomClient != null) 'nom_client': nomClient,
+      if (client != null) 'client': client,
       if (fournisseur != null) 'fournisseur': fournisseur,
       if (dateFacture != null) 'date_facture': dateFacture,
     });
@@ -456,12 +454,12 @@ class FacturesCompanion extends UpdateCompanion<Facture> {
 
   FacturesCompanion copyWith(
       {Value<int>? idFacture,
-      Value<String>? nomClient,
+      Value<String>? client,
       Value<int>? fournisseur,
       Value<DateTime>? dateFacture}) {
     return FacturesCompanion(
       idFacture: idFacture ?? this.idFacture,
-      nomClient: nomClient ?? this.nomClient,
+      client: client ?? this.client,
       fournisseur: fournisseur ?? this.fournisseur,
       dateFacture: dateFacture ?? this.dateFacture,
     );
@@ -473,8 +471,8 @@ class FacturesCompanion extends UpdateCompanion<Facture> {
     if (idFacture.present) {
       map['id_facture'] = Variable<int>(idFacture.value);
     }
-    if (nomClient.present) {
-      map['nom_client'] = Variable<String>(nomClient.value);
+    if (client.present) {
+      map['client'] = Variable<String>(client.value);
     }
     if (fournisseur.present) {
       map['fournisseur'] = Variable<int>(fournisseur.value);
@@ -489,7 +487,7 @@ class FacturesCompanion extends UpdateCompanion<Facture> {
   String toString() {
     return (StringBuffer('FacturesCompanion(')
           ..write('idFacture: $idFacture, ')
-          ..write('nomClient: $nomClient, ')
+          ..write('client: $client, ')
           ..write('fournisseur: $fournisseur, ')
           ..write('dateFacture: $dateFacture')
           ..write(')'))

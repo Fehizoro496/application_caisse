@@ -1,12 +1,11 @@
+import 'package:application_caisse/invoice_service.dart';
 import 'package:get/get.dart';
 import 'models.dart';
 import 'package:flutter/material.dart';
 import './database.dart';
 import './db_service.dart';
 // import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 // import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 
 class Controller extends GetxController {
   List<OperationModel> listInvoiceLine = [];
@@ -15,11 +14,12 @@ class Controller extends GetxController {
   TextEditingController priceController = TextEditingController();
   double total = 0;
   final DBService dbService = Get.find();
+  final InvoiceService invoiceService = Get.put(InvoiceService());
 
   // Use the database from the service
   AppDatabase get database => dbService.database;
 
-  void saveOperation(OperationModel operation) {
+  void _saveOperationToDatabase(OperationModel operation) {
     dbService.saveOperation(operation);
   }
 
@@ -27,7 +27,7 @@ class Controller extends GetxController {
     return dbService.getAllOperations();
   }
 
-  void successSaveSnackbar() {
+  void _successSaveSnackbar() {
     Get.snackbar(
       "Enregistrement Effectué",
       "Enregistrement effectué avec succès!",
@@ -38,35 +38,7 @@ class Controller extends GetxController {
     );
   }
 
-  void invoiceDialog() {
-    Get.dialog(AlertDialog(
-      surfaceTintColor: const Color(0xFFFFFFFF),
-      title: const Text('Facturation', textAlign: TextAlign.center),
-      content: const Text('Voulez vous imprimer une facture?'),
-      actions: [
-        TextButton(
-            onPressed: () {
-              Get.back();
-              generateInvoicePdf();
-              successSaveSnackbar();
-            },
-            child: const Text("OUI")),
-        TextButton(
-          onPressed: () {
-            Get.back();
-            clearInvoiceList();
-            successSaveSnackbar();
-          },
-          child: const Text(
-            "NON",
-            style: TextStyle(color: Colors.red),
-          ),
-        ),
-      ],
-    ));
-  }
-
-  void confirmDialog() {
+  void _confirmDialog() {
     Get.dialog(AlertDialog(
       surfaceTintColor: const Color(0xFFFFFFFF),
       title: const Text('CONFIRMATION', textAlign: TextAlign.center),
@@ -75,12 +47,14 @@ class Controller extends GetxController {
         TextButton(
             onPressed: () async {
               for (var operation in listInvoiceLine) {
-                saveOperation(operation);
+                _saveOperationToDatabase(operation);
               }
               // print("rows Added");
               // getAllOperations().then((value) => print(value));
               Get.back();
-              invoiceDialog();
+              invoiceService.invoiceProcess(listInvoiceLine);
+              _clearInvoiceList();
+              _successSaveSnackbar();
             },
             child: const Text('OUI')),
         TextButton(
@@ -95,7 +69,7 @@ class Controller extends GetxController {
     ));
   }
 
-  void save() {
+  void saveOperations() {
     if (listInvoiceLine.isEmpty) {
       Get.snackbar(
         'Erreur',
@@ -106,13 +80,13 @@ class Controller extends GetxController {
         colorText: Colors.white,
       );
     } else {
-      confirmDialog();
+      _confirmDialog();
     }
 
     // Get.snackbar('Enregistrement effectué', ' ');
   }
 
-  void clearInvoiceList() {
+  void _clearInvoiceList() {
     listInvoiceLine.clear();
     total = 0;
     update();
@@ -143,79 +117,5 @@ class Controller extends GetxController {
         listInvoiceLine[index].prixOperation;
     listInvoiceLine.removeAt(index);
     update();
-  }
-
-  Future<void> generateInvoicePdf() async {
-    final pdf = pw.Document();
-
-    pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) {
-          return pw.Column(
-            children: [
-              pw.Text('FACTURE', style: const pw.TextStyle(fontSize: 24)),
-              pw.SizedBox(height: 20),
-              pw.TableHelper.fromTextArray(
-                headerAlignment: pw.Alignment.center,
-                columnWidths: const {
-                  0: pw.FractionColumnWidth(0.35),
-                  1: pw.FractionColumnWidth(0.2),
-                  2: pw.FractionColumnWidth(0.2),
-                  3: pw.FractionColumnWidth(0.25),
-                },
-                cellAlignments: const {
-                  0: pw.Alignment.centerLeft,
-                  1: pw.Alignment.center,
-                  2: pw.Alignment.center,
-                  3: pw.Alignment.centerRight,
-                },
-                headers: ['Désignation', 'Quantité', 'PU (en Ar)', 'Total'],
-                data: listInvoiceLine.map((operation) {
-                  return [
-                    operation.nomOperation,
-                    operation.quantiteOperation.toString(),
-                    operation.prixOperation.toString(),
-                    "${operation.quantiteOperation * operation.prixOperation} Ar"
-                  ];
-                }).toList(),
-              ),
-              pw.SizedBox(height: 20),
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.SizedBox(),
-                  pw.Text(
-                    'Total: $total Ar',
-                    style: const pw.TextStyle(fontSize: 18),
-                  ),
-                ],
-              ),
-            ],
-          );
-        },
-      ),
-    );
-
-    // final output = await getTemporaryDirectory();
-    // final file = File("${output.path}\invoice.pdf");
-
-    final file =
-        File("C:\\Users\\${getWindowsUsername()}\\Desktop\\facture.pdf");
-    await file.writeAsBytes(await pdf.save());
-    print("Chemin vers la facture => ${file.path}");
-
-    Get.snackbar(
-      'PDF Generated',
-      'Invoice PDF has been generated successfully!',
-      snackPosition: SnackPosition.TOP,
-      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 70.0),
-      backgroundColor: Color.fromARGB(175, 0, 225, 0),
-      colorText: Colors.white,
-    );
-    clearInvoiceList();
-  }
-
-  String getWindowsUsername() {
-    return Platform.environment['USERNAME'] ?? 'Utilisateur inconnu';
   }
 }

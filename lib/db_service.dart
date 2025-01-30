@@ -1,9 +1,7 @@
 import 'package:get/get.dart';
 import './database.dart';
 import './models.dart';
-import 'package:drift/drift.dart';
-import 'package:drift/src/runtime/data_class.dart'
-    as dataClass; //import Value as Val from this package
+import 'package:drift/src/runtime/data_class.dart' as data_class;
 
 class DBService extends GetxService {
   late AppDatabase database;
@@ -31,12 +29,10 @@ class DBService extends GetxService {
   Future<int> saveFacture(
       {required String client, required int fournisseur, DateTime? date}) {
     return database.into(database.factures).insert(FacturesCompanion.insert(
-        nomClient: client,
+        client: client,
         fournisseur: fournisseur,
         dateFacture: date ?? DateTime.timestamp()));
   }
-
-  //a function that get operations by id and update its facture column
 
   Future<Operation?> getOperationById(int id) {
     return (database.select(database.operations)
@@ -44,14 +40,14 @@ class DBService extends GetxService {
         .getSingleOrNull();
   }
 
-  Future<void> updateOperationFacture(int id, int? factureId) async {
+  Future<void> assignFactureInOperation(int id, int? factureId) async {
     final operation = await getOperationById(id);
     if (operation != null) {
       await (database.update(database.operations)
             ..where((tbl) => tbl.idOperation.equals(id)))
           .write(
         OperationsCompanion(
-          facture: dataClass.Value(factureId),
+          facture: data_class.Value(factureId),
         ),
       );
     }
