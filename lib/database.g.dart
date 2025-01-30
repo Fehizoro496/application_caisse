@@ -3,239 +3,6 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
-class $UtilisateursTable extends Utilisateurs
-    with TableInfo<$UtilisateursTable, Utilisateur> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $UtilisateursTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idUtilisateurMeta =
-      const VerificationMeta('idUtilisateur');
-  @override
-  late final GeneratedColumn<int> idUtilisateur = GeneratedColumn<int>(
-      'id_utilisateur', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _nomUtilisateurMeta =
-      const VerificationMeta('nomUtilisateur');
-  @override
-  late final GeneratedColumn<String> nomUtilisateur = GeneratedColumn<String>(
-      'nom_utilisateur', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
-  static const VerificationMeta _motDePasseUtilisateurMeta =
-      const VerificationMeta('motDePasseUtilisateur');
-  @override
-  late final GeneratedColumn<String> motDePasseUtilisateur =
-      GeneratedColumn<String>('mot_de_passe_utilisateur', aliasedName, false,
-          type: DriftSqlType.string, requiredDuringInsert: true);
-  @override
-  List<GeneratedColumn> get $columns =>
-      [idUtilisateur, nomUtilisateur, motDePasseUtilisateur];
-  @override
-  String get aliasedName => _alias ?? 'utilisateurs';
-  @override
-  String get actualTableName => 'utilisateurs';
-  @override
-  VerificationContext validateIntegrity(Insertable<Utilisateur> instance,
-      {bool isInserting = false}) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id_utilisateur')) {
-      context.handle(
-          _idUtilisateurMeta,
-          idUtilisateur.isAcceptableOrUnknown(
-              data['id_utilisateur']!, _idUtilisateurMeta));
-    }
-    if (data.containsKey('nom_utilisateur')) {
-      context.handle(
-          _nomUtilisateurMeta,
-          nomUtilisateur.isAcceptableOrUnknown(
-              data['nom_utilisateur']!, _nomUtilisateurMeta));
-    } else if (isInserting) {
-      context.missing(_nomUtilisateurMeta);
-    }
-    if (data.containsKey('mot_de_passe_utilisateur')) {
-      context.handle(
-          _motDePasseUtilisateurMeta,
-          motDePasseUtilisateur.isAcceptableOrUnknown(
-              data['mot_de_passe_utilisateur']!, _motDePasseUtilisateurMeta));
-    } else if (isInserting) {
-      context.missing(_motDePasseUtilisateurMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {idUtilisateur};
-  @override
-  Utilisateur map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Utilisateur(
-      idUtilisateur: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id_utilisateur'])!,
-      nomUtilisateur: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}nom_utilisateur'])!,
-      motDePasseUtilisateur: attachedDatabase.typeMapping.read(
-          DriftSqlType.string,
-          data['${effectivePrefix}mot_de_passe_utilisateur'])!,
-    );
-  }
-
-  @override
-  $UtilisateursTable createAlias(String alias) {
-    return $UtilisateursTable(attachedDatabase, alias);
-  }
-}
-
-class Utilisateur extends DataClass implements Insertable<Utilisateur> {
-  final int idUtilisateur;
-  final String nomUtilisateur;
-  final String motDePasseUtilisateur;
-  const Utilisateur(
-      {required this.idUtilisateur,
-      required this.nomUtilisateur,
-      required this.motDePasseUtilisateur});
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id_utilisateur'] = Variable<int>(idUtilisateur);
-    map['nom_utilisateur'] = Variable<String>(nomUtilisateur);
-    map['mot_de_passe_utilisateur'] = Variable<String>(motDePasseUtilisateur);
-    return map;
-  }
-
-  UtilisateursCompanion toCompanion(bool nullToAbsent) {
-    return UtilisateursCompanion(
-      idUtilisateur: Value(idUtilisateur),
-      nomUtilisateur: Value(nomUtilisateur),
-      motDePasseUtilisateur: Value(motDePasseUtilisateur),
-    );
-  }
-
-  factory Utilisateur.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Utilisateur(
-      idUtilisateur: serializer.fromJson<int>(json['idUtilisateur']),
-      nomUtilisateur: serializer.fromJson<String>(json['nomUtilisateur']),
-      motDePasseUtilisateur:
-          serializer.fromJson<String>(json['motDePasseUtilisateur']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'idUtilisateur': serializer.toJson<int>(idUtilisateur),
-      'nomUtilisateur': serializer.toJson<String>(nomUtilisateur),
-      'motDePasseUtilisateur': serializer.toJson<String>(motDePasseUtilisateur),
-    };
-  }
-
-  Utilisateur copyWith(
-          {int? idUtilisateur,
-          String? nomUtilisateur,
-          String? motDePasseUtilisateur}) =>
-      Utilisateur(
-        idUtilisateur: idUtilisateur ?? this.idUtilisateur,
-        nomUtilisateur: nomUtilisateur ?? this.nomUtilisateur,
-        motDePasseUtilisateur:
-            motDePasseUtilisateur ?? this.motDePasseUtilisateur,
-      );
-  @override
-  String toString() {
-    return (StringBuffer('Utilisateur(')
-          ..write('idUtilisateur: $idUtilisateur, ')
-          ..write('nomUtilisateur: $nomUtilisateur, ')
-          ..write('motDePasseUtilisateur: $motDePasseUtilisateur')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(idUtilisateur, nomUtilisateur, motDePasseUtilisateur);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is Utilisateur &&
-          other.idUtilisateur == this.idUtilisateur &&
-          other.nomUtilisateur == this.nomUtilisateur &&
-          other.motDePasseUtilisateur == this.motDePasseUtilisateur);
-}
-
-class UtilisateursCompanion extends UpdateCompanion<Utilisateur> {
-  final Value<int> idUtilisateur;
-  final Value<String> nomUtilisateur;
-  final Value<String> motDePasseUtilisateur;
-  const UtilisateursCompanion({
-    this.idUtilisateur = const Value.absent(),
-    this.nomUtilisateur = const Value.absent(),
-    this.motDePasseUtilisateur = const Value.absent(),
-  });
-  UtilisateursCompanion.insert({
-    this.idUtilisateur = const Value.absent(),
-    required String nomUtilisateur,
-    required String motDePasseUtilisateur,
-  })  : nomUtilisateur = Value(nomUtilisateur),
-        motDePasseUtilisateur = Value(motDePasseUtilisateur);
-  static Insertable<Utilisateur> custom({
-    Expression<int>? idUtilisateur,
-    Expression<String>? nomUtilisateur,
-    Expression<String>? motDePasseUtilisateur,
-  }) {
-    return RawValuesInsertable({
-      if (idUtilisateur != null) 'id_utilisateur': idUtilisateur,
-      if (nomUtilisateur != null) 'nom_utilisateur': nomUtilisateur,
-      if (motDePasseUtilisateur != null)
-        'mot_de_passe_utilisateur': motDePasseUtilisateur,
-    });
-  }
-
-  UtilisateursCompanion copyWith(
-      {Value<int>? idUtilisateur,
-      Value<String>? nomUtilisateur,
-      Value<String>? motDePasseUtilisateur}) {
-    return UtilisateursCompanion(
-      idUtilisateur: idUtilisateur ?? this.idUtilisateur,
-      nomUtilisateur: nomUtilisateur ?? this.nomUtilisateur,
-      motDePasseUtilisateur:
-          motDePasseUtilisateur ?? this.motDePasseUtilisateur,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (idUtilisateur.present) {
-      map['id_utilisateur'] = Variable<int>(idUtilisateur.value);
-    }
-    if (nomUtilisateur.present) {
-      map['nom_utilisateur'] = Variable<String>(nomUtilisateur.value);
-    }
-    if (motDePasseUtilisateur.present) {
-      map['mot_de_passe_utilisateur'] =
-          Variable<String>(motDePasseUtilisateur.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('UtilisateursCompanion(')
-          ..write('idUtilisateur: $idUtilisateur, ')
-          ..write('nomUtilisateur: $nomUtilisateur, ')
-          ..write('motDePasseUtilisateur: $motDePasseUtilisateur')
-          ..write(')'))
-        .toString();
-  }
-}
-
 class $FacturesTable extends Factures with TableInfo<$FacturesTable, Facture> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -256,15 +23,6 @@ class $FacturesTable extends Factures with TableInfo<$FacturesTable, Facture> {
   late final GeneratedColumn<String> client = GeneratedColumn<String>(
       'client', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _fournisseurMeta =
-      const VerificationMeta('fournisseur');
-  @override
-  late final GeneratedColumn<int> fournisseur = GeneratedColumn<int>(
-      'fournisseur', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES utilisateurs (id_utilisateur)'));
   static const VerificationMeta _dateFactureMeta =
       const VerificationMeta('dateFacture');
   @override
@@ -272,8 +30,7 @@ class $FacturesTable extends Factures with TableInfo<$FacturesTable, Facture> {
       'date_facture', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns =>
-      [idFacture, client, fournisseur, dateFacture];
+  List<GeneratedColumn> get $columns => [idFacture, client, dateFacture];
   @override
   String get aliasedName => _alias ?? 'factures';
   @override
@@ -292,14 +49,6 @@ class $FacturesTable extends Factures with TableInfo<$FacturesTable, Facture> {
           client.isAcceptableOrUnknown(data['client']!, _clientMeta));
     } else if (isInserting) {
       context.missing(_clientMeta);
-    }
-    if (data.containsKey('fournisseur')) {
-      context.handle(
-          _fournisseurMeta,
-          fournisseur.isAcceptableOrUnknown(
-              data['fournisseur']!, _fournisseurMeta));
-    } else if (isInserting) {
-      context.missing(_fournisseurMeta);
     }
     if (data.containsKey('date_facture')) {
       context.handle(
@@ -322,8 +71,6 @@ class $FacturesTable extends Factures with TableInfo<$FacturesTable, Facture> {
           .read(DriftSqlType.int, data['${effectivePrefix}id_facture'])!,
       client: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}client'])!,
-      fournisseur: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}fournisseur'])!,
       dateFacture: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}date_facture'])!,
     );
@@ -338,19 +85,16 @@ class $FacturesTable extends Factures with TableInfo<$FacturesTable, Facture> {
 class Facture extends DataClass implements Insertable<Facture> {
   final int idFacture;
   final String client;
-  final int fournisseur;
   final DateTime dateFacture;
   const Facture(
       {required this.idFacture,
       required this.client,
-      required this.fournisseur,
       required this.dateFacture});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id_facture'] = Variable<int>(idFacture);
     map['client'] = Variable<String>(client);
-    map['fournisseur'] = Variable<int>(fournisseur);
     map['date_facture'] = Variable<DateTime>(dateFacture);
     return map;
   }
@@ -359,7 +103,6 @@ class Facture extends DataClass implements Insertable<Facture> {
     return FacturesCompanion(
       idFacture: Value(idFacture),
       client: Value(client),
-      fournisseur: Value(fournisseur),
       dateFacture: Value(dateFacture),
     );
   }
@@ -370,7 +113,6 @@ class Facture extends DataClass implements Insertable<Facture> {
     return Facture(
       idFacture: serializer.fromJson<int>(json['idFacture']),
       client: serializer.fromJson<String>(json['client']),
-      fournisseur: serializer.fromJson<int>(json['fournisseur']),
       dateFacture: serializer.fromJson<DateTime>(json['dateFacture']),
     );
   }
@@ -380,20 +122,14 @@ class Facture extends DataClass implements Insertable<Facture> {
     return <String, dynamic>{
       'idFacture': serializer.toJson<int>(idFacture),
       'client': serializer.toJson<String>(client),
-      'fournisseur': serializer.toJson<int>(fournisseur),
       'dateFacture': serializer.toJson<DateTime>(dateFacture),
     };
   }
 
-  Facture copyWith(
-          {int? idFacture,
-          String? client,
-          int? fournisseur,
-          DateTime? dateFacture}) =>
+  Facture copyWith({int? idFacture, String? client, DateTime? dateFacture}) =>
       Facture(
         idFacture: idFacture ?? this.idFacture,
         client: client ?? this.client,
-        fournisseur: fournisseur ?? this.fournisseur,
         dateFacture: dateFacture ?? this.dateFacture,
       );
   @override
@@ -401,53 +137,45 @@ class Facture extends DataClass implements Insertable<Facture> {
     return (StringBuffer('Facture(')
           ..write('idFacture: $idFacture, ')
           ..write('client: $client, ')
-          ..write('fournisseur: $fournisseur, ')
           ..write('dateFacture: $dateFacture')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(idFacture, client, fournisseur, dateFacture);
+  int get hashCode => Object.hash(idFacture, client, dateFacture);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Facture &&
           other.idFacture == this.idFacture &&
           other.client == this.client &&
-          other.fournisseur == this.fournisseur &&
           other.dateFacture == this.dateFacture);
 }
 
 class FacturesCompanion extends UpdateCompanion<Facture> {
   final Value<int> idFacture;
   final Value<String> client;
-  final Value<int> fournisseur;
   final Value<DateTime> dateFacture;
   const FacturesCompanion({
     this.idFacture = const Value.absent(),
     this.client = const Value.absent(),
-    this.fournisseur = const Value.absent(),
     this.dateFacture = const Value.absent(),
   });
   FacturesCompanion.insert({
     this.idFacture = const Value.absent(),
     required String client,
-    required int fournisseur,
     required DateTime dateFacture,
   })  : client = Value(client),
-        fournisseur = Value(fournisseur),
         dateFacture = Value(dateFacture);
   static Insertable<Facture> custom({
     Expression<int>? idFacture,
     Expression<String>? client,
-    Expression<int>? fournisseur,
     Expression<DateTime>? dateFacture,
   }) {
     return RawValuesInsertable({
       if (idFacture != null) 'id_facture': idFacture,
       if (client != null) 'client': client,
-      if (fournisseur != null) 'fournisseur': fournisseur,
       if (dateFacture != null) 'date_facture': dateFacture,
     });
   }
@@ -455,12 +183,10 @@ class FacturesCompanion extends UpdateCompanion<Facture> {
   FacturesCompanion copyWith(
       {Value<int>? idFacture,
       Value<String>? client,
-      Value<int>? fournisseur,
       Value<DateTime>? dateFacture}) {
     return FacturesCompanion(
       idFacture: idFacture ?? this.idFacture,
       client: client ?? this.client,
-      fournisseur: fournisseur ?? this.fournisseur,
       dateFacture: dateFacture ?? this.dateFacture,
     );
   }
@@ -474,9 +200,6 @@ class FacturesCompanion extends UpdateCompanion<Facture> {
     if (client.present) {
       map['client'] = Variable<String>(client.value);
     }
-    if (fournisseur.present) {
-      map['fournisseur'] = Variable<int>(fournisseur.value);
-    }
     if (dateFacture.present) {
       map['date_facture'] = Variable<DateTime>(dateFacture.value);
     }
@@ -488,7 +211,6 @@ class FacturesCompanion extends UpdateCompanion<Facture> {
     return (StringBuffer('FacturesCompanion(')
           ..write('idFacture: $idFacture, ')
           ..write('client: $client, ')
-          ..write('fournisseur: $fournisseur, ')
           ..write('dateFacture: $dateFacture')
           ..write(')'))
         .toString();
@@ -844,13 +566,11 @@ class OperationsCompanion extends UpdateCompanion<Operation> {
 
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
-  late final $UtilisateursTable utilisateurs = $UtilisateursTable(this);
   late final $FacturesTable factures = $FacturesTable(this);
   late final $OperationsTable operations = $OperationsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [utilisateurs, factures, operations];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [factures, operations];
 }

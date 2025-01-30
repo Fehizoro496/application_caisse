@@ -22,24 +22,24 @@ class Operations extends Table {
 class Factures extends Table {
   IntColumn get idFacture => integer().autoIncrement()();
   TextColumn get client => text()();
-  IntColumn get fournisseur =>
-      integer().references(Utilisateurs, #idUtilisateur)();
+  // IntColumn get fournisseur =>
+  //     integer().references(Utilisateurs, #idUtilisateur)();
   DateTimeColumn get dateFacture => dateTime()();
 }
 
-class Utilisateurs extends Table {
-  IntColumn get idUtilisateur => integer().autoIncrement()();
-  TextColumn get nomUtilisateur => text().unique()();
-  TextColumn get motDePasseUtilisateur => text()();
-}
+// class Utilisateurs extends Table {
+//   IntColumn get idUtilisateur => integer().autoIncrement()();
+//   TextColumn get nomUtilisateur => text().unique()();
+//   TextColumn get motDePasseUtilisateur => text()();
+// }
 
 // @DriftDatabase(tables: [Services, Ventes, Commandes])
-@DriftDatabase(tables: [Operations, Factures, Utilisateurs])
+@DriftDatabase(tables: [Operations, Factures])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration {
@@ -60,7 +60,7 @@ class AppDatabase extends _$AppDatabase {
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationCacheDirectory();
-    final file = File(p.join(dbFolder.path, 'db.sqlite'));
+    final file = File(p.join(dbFolder.path, 'caisse_database.sqlite'));
     if (Platform.isAndroid) {
       await applyWorkaroundToOpenSqlite3OnOldAndroidVersions();
     }

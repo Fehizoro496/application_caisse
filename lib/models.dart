@@ -6,13 +6,13 @@ class UtilisateurModel {
 class FactureModel {
   int? idFacture;
   late String client;
-  late int fournisseur;
+  // late int fournisseur;
   DateTime? dateFacture;
 
   FactureModel(
       {this.idFacture,
       required this.client,
-      required this.fournisseur,
+      // required this.fournisseur,
       this.dateFacture});
 }
 

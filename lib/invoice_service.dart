@@ -4,11 +4,16 @@ import './models.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'dart:io';
 import 'package:flutter/material.dart';
+import './db_service.dart';
 
 class InvoiceService extends GetxService {
   List<OperationModel> listInvoiceLine = [];
+  List<int> listOperationsID = [];
   late String client;
   TextEditingController clientController = TextEditingController();
+
+  final DBService dbService = Get.find();
+
   Future<InvoiceService> init() async {
     return this;
   }
@@ -21,9 +26,14 @@ class InvoiceService extends GetxService {
 
   void _getClientName() {
     Get.dialog(AlertDialog(
-      title: const Text("Veuillez entrer le nom du client :"),
+      surfaceTintColor: const Color(0xFFFFFFFF),
+      title: const Text(
+        "Client Name",
+        textAlign: TextAlign.center,
+      ),
       content: TextFormField(
         controller: clientController,
+        decoration: const InputDecoration(label: Text("Nom du client")),
       ),
       actions: [
         TextButton(
@@ -38,11 +48,12 @@ class InvoiceService extends GetxService {
     ));
   }
 
-  void invoiceProcess(List<OperationModel> listInvoiceLine) {
+  void invoiceProcess(List<OperationModel> listInvoiceLine, List<int> listID) {
     this.listInvoiceLine.addAll(listInvoiceLine);
+    listOperationsID.addAll(listID);
 
     Get.dialog(AlertDialog(
-      // surfaceTintColor: const Color(0xFFFFFFFF),
+      surfaceTintColor: const Color(0xFFFFFFFF),
       title: const Text('Facturation', textAlign: TextAlign.center),
       content: const Text('Voulez vous imprimer une facture?'),
       actions: [
@@ -66,6 +77,14 @@ class InvoiceService extends GetxService {
   }
 
   Future<bool> _generateInvoicePdf() async {
+    // print(listOperationsID);
+    dbService.saveFacture(client: client).then((factureID) => {
+          listOperationsID.forEach((id) {
+            dbService.assignFactureInOperation(id, factureID);
+            // print("updated");
+          })
+        });
+
     final pdf = pw.Document();
     double total = 0;
     for (var element in listInvoiceLine) {
@@ -164,7 +183,7 @@ class InvoiceService extends GetxService {
     final file = File(
         "C:\\Users\\${_getWindowsUsername()}\\Desktop\\facture ${client.split(" ").last}.pdf");
     await file.writeAsBytes(await pdf.save());
-    print("Chemin vers la facture => ${file.path}");
+    // print("Chemin vers la facture => ${file.path}");
 
     Get.snackbar(
       'PDF Generated',

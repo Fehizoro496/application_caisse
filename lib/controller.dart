@@ -8,6 +8,7 @@ import './db_service.dart';
 // import 'package:path_provider/path_provider.dart';
 
 class Controller extends GetxController {
+  List<int> listOperationsID = [];
   List<OperationModel> listInvoiceLine = [];
   TextEditingController designationController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
@@ -19,8 +20,8 @@ class Controller extends GetxController {
   // Use the database from the service
   AppDatabase get database => dbService.database;
 
-  void _saveOperationToDatabase(OperationModel operation) {
-    dbService.saveOperation(operation);
+  Future<int> _saveOperationToDatabase(OperationModel operation) {
+    return dbService.saveOperation(operation);
   }
 
   Future<List<Operation>> getAllOperations() {
@@ -47,12 +48,13 @@ class Controller extends GetxController {
         TextButton(
             onPressed: () async {
               for (var operation in listInvoiceLine) {
-                _saveOperationToDatabase(operation);
+                _saveOperationToDatabase(operation)
+                    .then((value) => listOperationsID.add(value));
               }
               // print("rows Added");
               // getAllOperations().then((value) => print(value));
               Get.back();
-              invoiceService.invoiceProcess(listInvoiceLine);
+              invoiceService.invoiceProcess(listInvoiceLine, listOperationsID);
               _clearInvoiceList();
               _successSaveSnackbar();
             },
@@ -89,6 +91,7 @@ class Controller extends GetxController {
   void _clearInvoiceList() {
     listInvoiceLine.clear();
     total = 0;
+    listOperationsID.clear();
     update();
   }
 

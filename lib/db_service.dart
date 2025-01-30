@@ -20,17 +20,16 @@ class DBService extends GetxService {
             dateOperation: operation.dateOperation ?? DateTime.timestamp()));
   }
 
-  Future<int> saveUtilisateur({required String nom, required String mdp}) {
-    return database.into(database.utilisateurs).insert(
-        UtilisateursCompanion.insert(
-            nomUtilisateur: nom, motDePasseUtilisateur: mdp));
-  }
+  // Future<int> saveUtilisateur({required String nom, required String mdp}) {
+  //   return database.into(database.utilisateurs).insert(
+  //       UtilisateursCompanion.insert(
+  //           nomUtilisateur: nom, motDePasseUtilisateur: mdp));
+  // }
 
-  Future<int> saveFacture(
-      {required String client, required int fournisseur, DateTime? date}) {
+  Future<int> saveFacture({required String client, DateTime? date}) {
     return database.into(database.factures).insert(FacturesCompanion.insert(
         client: client,
-        fournisseur: fournisseur,
+        // fournisseur: fournisseur,
         dateFacture: date ?? DateTime.timestamp()));
   }
 
@@ -40,11 +39,11 @@ class DBService extends GetxService {
         .getSingleOrNull();
   }
 
-  Future<void> assignFactureInOperation(int id, int? factureId) async {
-    final operation = await getOperationById(id);
+  Future<void> assignFactureInOperation(int operationId, int factureId) async {
+    final operation = await getOperationById(operationId);
     if (operation != null) {
       await (database.update(database.operations)
-            ..where((tbl) => tbl.idOperation.equals(id)))
+            ..where((tbl) => tbl.idOperation.equals(operationId)))
           .write(
         OperationsCompanion(
           facture: data_class.Value(factureId),
@@ -52,9 +51,6 @@ class DBService extends GetxService {
       );
     }
   }
-
-  // TODO implement Operation update when create Facture
-  // fill the facture foreignkey column of Operation row with the id of the Facture created
 
   Future<List<Operation>> getAllOperations() async {
     List<Operation> out = await database.select(database.operations).get();
