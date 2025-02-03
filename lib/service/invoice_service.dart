@@ -1,6 +1,6 @@
 import 'package:application_caisse/chiffre_en_lettre.dart';
 import 'package:get/get.dart';
-import './models.dart';
+import '../model/operation_model.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -79,10 +79,8 @@ class InvoiceService extends GetxService {
   Future<bool> _generateInvoicePdf() async {
     // print(listOperationsID);
     dbService.saveFacture(client: client).then((factureID) => {
-          listOperationsID.forEach((id) {
-            dbService.assignFactureInOperation(id, factureID);
-            // print("updated");
-          })
+          for (int id in listOperationsID)
+            {dbService.assignFactureInOperation(id, factureID)}
         });
 
     final pdf = pw.Document();

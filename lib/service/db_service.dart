@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
-import './database.dart';
-import './models.dart';
+import 'package:application_caisse/persistance/database.dart';
+import 'package:application_caisse/model/operation_model.dart';
+import 'package:application_caisse/model/depense_model.dart';
+// ignore: implementation_imports
 import 'package:drift/src/runtime/data_class.dart' as data_class;
 
 class DBService extends GetxService {
@@ -9,6 +11,14 @@ class DBService extends GetxService {
   Future<DBService> init() async {
     database = AppDatabase();
     return this;
+  }
+
+  Future<int> saveDepense(DepenseModel depense) async {
+    return await database.into(database.depenses).insert(
+        DepensesCompanion.insert(
+            libelle: depense.libelle,
+            montant: depense.montant,
+            dateDepense: depense.dateDepense ?? DateTime.timestamp()));
   }
 
   Future<int> saveOperation(OperationModel operation) async {

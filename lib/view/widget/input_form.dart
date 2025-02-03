@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../models.dart';
-import '../controller.dart';
+import 'package:application_caisse/model/operation_model.dart';
+import 'package:application_caisse/controller/controller.dart';
 
 class InputForm extends StatelessWidget {
   InputForm({super.key});

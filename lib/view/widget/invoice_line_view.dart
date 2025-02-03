@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models.dart';
-import '../controller.dart';
+import 'package:application_caisse/model/operation_model.dart';
+import 'package:application_caisse/controller/controller.dart';
 import 'package:get/get.dart';
 
 Widget invoiceLineView(int index, OperationModel operation) {

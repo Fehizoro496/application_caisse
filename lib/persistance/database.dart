@@ -9,6 +9,13 @@ import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 
 part 'database.g.dart';
 
+class Depenses extends Table {
+  IntColumn get idDepense => integer().autoIncrement()();
+  TextColumn get libelle => text()();
+  IntColumn get montant => integer()();
+  DateTimeColumn get dateDepense => dateTime()();
+}
+
 class Operations extends Table {
   IntColumn get idOperation => integer().autoIncrement()();
   TextColumn get nomOperation => text()();
@@ -22,24 +29,15 @@ class Operations extends Table {
 class Factures extends Table {
   IntColumn get idFacture => integer().autoIncrement()();
   TextColumn get client => text()();
-  // IntColumn get fournisseur =>
-  //     integer().references(Utilisateurs, #idUtilisateur)();
   DateTimeColumn get dateFacture => dateTime()();
 }
 
-// class Utilisateurs extends Table {
-//   IntColumn get idUtilisateur => integer().autoIncrement()();
-//   TextColumn get nomUtilisateur => text().unique()();
-//   TextColumn get motDePasseUtilisateur => text()();
-// }
-
-// @DriftDatabase(tables: [Services, Ventes, Commandes])
-@DriftDatabase(tables: [Operations, Factures])
+@DriftDatabase(tables: [Operations, Factures, Depenses])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration {

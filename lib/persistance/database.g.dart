@@ -564,13 +564,270 @@ class OperationsCompanion extends UpdateCompanion<Operation> {
   }
 }
 
+class $DepensesTable extends Depenses with TableInfo<$DepensesTable, Depense> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DepensesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idDepenseMeta =
+      const VerificationMeta('idDepense');
+  @override
+  late final GeneratedColumn<int> idDepense = GeneratedColumn<int>(
+      'id_depense', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _libelleMeta =
+      const VerificationMeta('libelle');
+  @override
+  late final GeneratedColumn<String> libelle = GeneratedColumn<String>(
+      'libelle', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _montantMeta =
+      const VerificationMeta('montant');
+  @override
+  late final GeneratedColumn<int> montant = GeneratedColumn<int>(
+      'montant', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _dateDepenseMeta =
+      const VerificationMeta('dateDepense');
+  @override
+  late final GeneratedColumn<DateTime> dateDepense = GeneratedColumn<DateTime>(
+      'date_depense', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [idDepense, libelle, montant, dateDepense];
+  @override
+  String get aliasedName => _alias ?? 'depenses';
+  @override
+  String get actualTableName => 'depenses';
+  @override
+  VerificationContext validateIntegrity(Insertable<Depense> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id_depense')) {
+      context.handle(_idDepenseMeta,
+          idDepense.isAcceptableOrUnknown(data['id_depense']!, _idDepenseMeta));
+    }
+    if (data.containsKey('libelle')) {
+      context.handle(_libelleMeta,
+          libelle.isAcceptableOrUnknown(data['libelle']!, _libelleMeta));
+    } else if (isInserting) {
+      context.missing(_libelleMeta);
+    }
+    if (data.containsKey('montant')) {
+      context.handle(_montantMeta,
+          montant.isAcceptableOrUnknown(data['montant']!, _montantMeta));
+    } else if (isInserting) {
+      context.missing(_montantMeta);
+    }
+    if (data.containsKey('date_depense')) {
+      context.handle(
+          _dateDepenseMeta,
+          dateDepense.isAcceptableOrUnknown(
+              data['date_depense']!, _dateDepenseMeta));
+    } else if (isInserting) {
+      context.missing(_dateDepenseMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {idDepense};
+  @override
+  Depense map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Depense(
+      idDepense: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id_depense'])!,
+      libelle: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}libelle'])!,
+      montant: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}montant'])!,
+      dateDepense: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}date_depense'])!,
+    );
+  }
+
+  @override
+  $DepensesTable createAlias(String alias) {
+    return $DepensesTable(attachedDatabase, alias);
+  }
+}
+
+class Depense extends DataClass implements Insertable<Depense> {
+  final int idDepense;
+  final String libelle;
+  final int montant;
+  final DateTime dateDepense;
+  const Depense(
+      {required this.idDepense,
+      required this.libelle,
+      required this.montant,
+      required this.dateDepense});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id_depense'] = Variable<int>(idDepense);
+    map['libelle'] = Variable<String>(libelle);
+    map['montant'] = Variable<int>(montant);
+    map['date_depense'] = Variable<DateTime>(dateDepense);
+    return map;
+  }
+
+  DepensesCompanion toCompanion(bool nullToAbsent) {
+    return DepensesCompanion(
+      idDepense: Value(idDepense),
+      libelle: Value(libelle),
+      montant: Value(montant),
+      dateDepense: Value(dateDepense),
+    );
+  }
+
+  factory Depense.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Depense(
+      idDepense: serializer.fromJson<int>(json['idDepense']),
+      libelle: serializer.fromJson<String>(json['libelle']),
+      montant: serializer.fromJson<int>(json['montant']),
+      dateDepense: serializer.fromJson<DateTime>(json['dateDepense']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'idDepense': serializer.toJson<int>(idDepense),
+      'libelle': serializer.toJson<String>(libelle),
+      'montant': serializer.toJson<int>(montant),
+      'dateDepense': serializer.toJson<DateTime>(dateDepense),
+    };
+  }
+
+  Depense copyWith(
+          {int? idDepense,
+          String? libelle,
+          int? montant,
+          DateTime? dateDepense}) =>
+      Depense(
+        idDepense: idDepense ?? this.idDepense,
+        libelle: libelle ?? this.libelle,
+        montant: montant ?? this.montant,
+        dateDepense: dateDepense ?? this.dateDepense,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Depense(')
+          ..write('idDepense: $idDepense, ')
+          ..write('libelle: $libelle, ')
+          ..write('montant: $montant, ')
+          ..write('dateDepense: $dateDepense')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(idDepense, libelle, montant, dateDepense);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Depense &&
+          other.idDepense == this.idDepense &&
+          other.libelle == this.libelle &&
+          other.montant == this.montant &&
+          other.dateDepense == this.dateDepense);
+}
+
+class DepensesCompanion extends UpdateCompanion<Depense> {
+  final Value<int> idDepense;
+  final Value<String> libelle;
+  final Value<int> montant;
+  final Value<DateTime> dateDepense;
+  const DepensesCompanion({
+    this.idDepense = const Value.absent(),
+    this.libelle = const Value.absent(),
+    this.montant = const Value.absent(),
+    this.dateDepense = const Value.absent(),
+  });
+  DepensesCompanion.insert({
+    this.idDepense = const Value.absent(),
+    required String libelle,
+    required int montant,
+    required DateTime dateDepense,
+  })  : libelle = Value(libelle),
+        montant = Value(montant),
+        dateDepense = Value(dateDepense);
+  static Insertable<Depense> custom({
+    Expression<int>? idDepense,
+    Expression<String>? libelle,
+    Expression<int>? montant,
+    Expression<DateTime>? dateDepense,
+  }) {
+    return RawValuesInsertable({
+      if (idDepense != null) 'id_depense': idDepense,
+      if (libelle != null) 'libelle': libelle,
+      if (montant != null) 'montant': montant,
+      if (dateDepense != null) 'date_depense': dateDepense,
+    });
+  }
+
+  DepensesCompanion copyWith(
+      {Value<int>? idDepense,
+      Value<String>? libelle,
+      Value<int>? montant,
+      Value<DateTime>? dateDepense}) {
+    return DepensesCompanion(
+      idDepense: idDepense ?? this.idDepense,
+      libelle: libelle ?? this.libelle,
+      montant: montant ?? this.montant,
+      dateDepense: dateDepense ?? this.dateDepense,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (idDepense.present) {
+      map['id_depense'] = Variable<int>(idDepense.value);
+    }
+    if (libelle.present) {
+      map['libelle'] = Variable<String>(libelle.value);
+    }
+    if (montant.present) {
+      map['montant'] = Variable<int>(montant.value);
+    }
+    if (dateDepense.present) {
+      map['date_depense'] = Variable<DateTime>(dateDepense.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DepensesCompanion(')
+          ..write('idDepense: $idDepense, ')
+          ..write('libelle: $libelle, ')
+          ..write('montant: $montant, ')
+          ..write('dateDepense: $dateDepense')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   late final $FacturesTable factures = $FacturesTable(this);
   late final $OperationsTable operations = $OperationsTable(this);
+  late final $DepensesTable depenses = $DepensesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [factures, operations];
+  List<DatabaseSchemaEntity> get allSchemaEntities =>
+      [factures, operations, depenses];
 }

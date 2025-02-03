@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:application_caisse/view/invoice_line_view.dart';
-
-// import '../models.dart';
-import '../../controller.dart';
+import 'package:application_caisse/view/widget/invoice_line_view.dart';
+import 'package:application_caisse/controller/controller.dart';
 import 'package:get/get.dart';
 
 Widget invoiceListView() {

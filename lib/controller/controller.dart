@@ -1,9 +1,10 @@
-import 'package:application_caisse/invoice_service.dart';
+import 'package:application_caisse/service/invoice_service.dart';
 import 'package:get/get.dart';
-import 'models.dart';
+import '../model/operation_model.dart';
+import '../model/depense_model.dart';
 import 'package:flutter/material.dart';
-import './database.dart';
-import './db_service.dart';
+import '../persistance/database.dart';
+import '../service/db_service.dart';
 // import 'package:pdf/pdf.dart';
 // import 'package:path_provider/path_provider.dart';
 
@@ -14,6 +15,7 @@ class Controller extends GetxController {
   TextEditingController quantityController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   double total = 0;
+
   final DBService dbService = Get.find();
   final InvoiceService invoiceService = Get.put(InvoiceService());
 
@@ -22,6 +24,10 @@ class Controller extends GetxController {
 
   Future<int> _saveOperationToDatabase(OperationModel operation) {
     return dbService.saveOperation(operation);
+  }
+
+  Future<int> _saveDepenseToDatabase(DepenseModel depense) {
+    return dbService.saveDepense(depense);
   }
 
   Future<List<Operation>> getAllOperations() {
