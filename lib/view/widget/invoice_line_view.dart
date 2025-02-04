@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:application_caisse/model/operation_model.dart';
-import 'package:application_caisse/controller/controller.dart';
+import 'package:application_caisse/controller/main_controller.dart';
 import 'package:get/get.dart';
 
 Widget invoiceLineView(int index, OperationModel operation) {
-  Controller controller = Get.find<Controller>();
+  final MainController controller = Get.find<MainController>();
+
   return ListTile(
     title: Text("${operation.nomOperation}\t x${operation.quantiteOperation}"),
     trailing: Wrap(

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:application_caisse/view/widget/invoice_line_view.dart';
-import 'package:application_caisse/controller/controller.dart';
+import 'package:application_caisse/controller/main_controller.dart';
 import 'package:get/get.dart';
 
 Widget invoiceListView() {
-  return GetBuilder<Controller>(builder: (context) {
-    Controller controller = Get.find<Controller>();
+  return GetBuilder<MainController>(builder: (context) {
+    MainController controller = Get.find<MainController>();
     return Container(
       height: 550,
       width: 400,

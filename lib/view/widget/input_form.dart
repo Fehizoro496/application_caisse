@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:application_caisse/model/operation_model.dart';
-import 'package:application_caisse/controller/controller.dart';
+import 'package:application_caisse/controller/main_controller.dart';
 
 class InputForm extends StatelessWidget {
   InputForm({super.key});
-  final Controller controller = Get.find<Controller>();
+  final MainController controller = Get.find<MainController>();
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
