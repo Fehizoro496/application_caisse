@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:application_caisse/persistance/database.dart';
 import 'package:application_caisse/model/operation_model.dart';
 import 'package:application_caisse/model/depense_model.dart';
-// ignore: implementation_imports
 import 'package:drift/src/runtime/data_class.dart' as data_class;
 
 class DBService extends GetxService {
@@ -30,12 +29,6 @@ class DBService extends GetxService {
             dateOperation: operation.dateOperation ?? DateTime.timestamp()));
   }
 
-  // Future<int> saveUtilisateur({required String nom, required String mdp}) {
-  //   return database.into(database.utilisateurs).insert(
-  //       UtilisateursCompanion.insert(
-  //           nomUtilisateur: nom, motDePasseUtilisateur: mdp));
-  // }
-
   Future<int> saveFacture({required String client, DateTime? date}) {
     return database.into(database.factures).insert(FacturesCompanion.insert(
         client: client,
@@ -49,14 +42,14 @@ class DBService extends GetxService {
         .getSingleOrNull();
   }
 
-  Future<void> assignFactureInOperation(int operationId, int factureId) async {
-    final operation = await getOperationById(operationId);
+  Future<void> assignFactureInOperation(int operationID, int factureID) async {
+    final operation = await getOperationById(operationID);
     if (operation != null) {
       await (database.update(database.operations)
-            ..where((tbl) => tbl.idOperation.equals(operationId)))
+            ..where((tbl) => tbl.idOperation.equals(operationID)))
           .write(
         OperationsCompanion(
-          facture: data_class.Value(factureId),
+          facture: data_class.Value(factureID),
         ),
       );
     }

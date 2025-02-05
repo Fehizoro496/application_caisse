@@ -1,5 +1,7 @@
+import 'package:collection/collection.dart';
 import 'package:application_caisse/chiffre_en_lettre.dart';
 import 'package:get/get.dart';
+// import 'package:pdf/pdf.dart';
 import '../model/operation_model.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'dart:io';
@@ -20,6 +22,7 @@ class InvoiceService extends GetxService {
 
   void _clearData() {
     listInvoiceLine.clear();
+    listOperationsID.clear();
     client = "";
     clientController.text = "";
   }
@@ -39,9 +42,10 @@ class InvoiceService extends GetxService {
         TextButton(
             onPressed: () {
               client = clientController.text;
-              _generateInvoicePdf();
-              Get.close(1);
-              _clearData();
+              _generateInvoicePdf().then((value) {
+                _clearData();
+                Get.close(1);
+              });
             },
             child: const Text("OUI"))
       ],
@@ -78,12 +82,12 @@ class InvoiceService extends GetxService {
 
   Future<bool> _generateInvoicePdf() async {
     // print(listOperationsID);
-    dbService.saveFacture(client: client).then((factureID) => {
-          for (int id in listOperationsID)
-            {dbService.assignFactureInOperation(id, factureID)}
-        });
+    int factureID = await dbService.saveFacture(client: client);
+    for (int id in listOperationsID) {
+      await dbService.assignFactureInOperation(id, factureID);
+    }
 
-    final pdf = pw.Document();
+    pw.Document pdf = pw.Document();
     double total = 0;
     for (var element in listInvoiceLine) {
       total += element.prixOperation * element.quantiteOperation;
@@ -118,25 +122,37 @@ class InvoiceService extends GetxService {
               pw.TableHelper.fromTextArray(
                 headerAlignment: pw.Alignment.center,
                 columnWidths: const {
-                  0: pw.FractionColumnWidth(0.35),
-                  1: pw.FractionColumnWidth(0.2),
+                  0: pw.FractionColumnWidth(0.05),
+                  1: pw.FractionColumnWidth(0.30),
                   2: pw.FractionColumnWidth(0.2),
-                  3: pw.FractionColumnWidth(0.25),
+                  3: pw.FractionColumnWidth(0.2),
+                  4: pw.FractionColumnWidth(0.25),
                 },
                 cellAlignments: const {
-                  0: pw.Alignment.centerLeft,
-                  1: pw.Alignment.center,
+                  0: pw.Alignment.center,
+                  1: pw.Alignment.centerLeft,
                   2: pw.Alignment.center,
-                  3: pw.Alignment.centerRight,
+                  3: pw.Alignment.center,
+                  4: pw.Alignment.centerRight,
                 },
                 headers: <String>[
+                  'N°',
                   'Désignation',
                   'Quantité',
                   'PU (en Ar)',
                   'Total'
                 ],
-                data: listInvoiceLine.map((operation) {
+                // border: const pw.TableBorder(
+                //   verticalInside: pw.BorderSide.none,
+                //   horizontalInside: pw.BorderSide(color: PdfColors.black),
+                //   right: pw.BorderSide(color: PdfColors.black),
+                //   left: pw.BorderSide(color: PdfColors.black),
+                //   bottom: pw.BorderSide(color: PdfColors.black),
+                //   top: pw.BorderSide(color: PdfColors.black),
+                // ),
+                data: listInvoiceLine.mapIndexed((index, operation) {
                   return <String>[
+                    '$index',
                     operation.nomOperation,
                     operation.quantiteOperation.toString(),
                     operation.prixOperation.toString(),
@@ -157,7 +173,7 @@ class InvoiceService extends GetxService {
               ),
               pw.SizedBox(height: 20),
               pw.Text(
-                  "Présente facture arrêtée à la somme de ${chiffreEnLettre(total.floor())} Ariary."),
+                  "Présente facture arrêtée à la somme de ${chiffreEnLettre(total.floor()).trim()} Ariary."),
               pw.SizedBox(height: 20),
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -179,18 +195,19 @@ class InvoiceService extends GetxService {
     // final file = File("${output.path}\invoice.pdf");
 
     final file = File(
-        "C:\\Users\\${_getWindowsUsername()}\\Desktop\\facture ${client.split(" ").last}.pdf");
-    await file.writeAsBytes(await pdf.save());
+        "C:\\Users\\${_getWindowsUsername()}\\Desktop\\facture ${client.trim()}.pdf");
+    await file.writeAsBytes(await pdf.save()).then((value) {
+      Get.snackbar(
+        'PDF Generated',
+        'Invoice PDF has been generated successfully!',
+        snackPosition: SnackPosition.TOP,
+        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 70.0),
+        backgroundColor: const Color.fromARGB(175, 0, 225, 0),
+        colorText: Colors.white,
+      );
+    });
     // print("Chemin vers la facture => ${file.path}");
 
-    Get.snackbar(
-      'PDF Generated',
-      'Invoice PDF has been generated successfully!',
-      snackPosition: SnackPosition.TOP,
-      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 70.0),
-      backgroundColor: const Color.fromARGB(175, 0, 225, 0),
-      colorText: Colors.white,
-    );
     return true;
   }
 

@@ -22,7 +22,9 @@ class DepenseController extends GetxController {
       Get.back();
       _successSaveSnackbar();
       // _clearForm();
-    }).catchError((error) => _errorSaveSnackbar(error));
+    }).catchError((error) {
+      _errorSaveSnackbar(error);
+    });
   }
 
   void _successSaveSnackbar() {
