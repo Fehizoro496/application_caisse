@@ -98,25 +98,43 @@ class InvoiceService extends GetxService {
         build: (pw.Context context) {
           return pw.Column(
             children: [
-              pw.Text('FACTURE',
+              pw.Text('FACTURE N° $factureID',
                   style: pw.TextStyle(
                       fontSize: 32, fontWeight: pw.FontWeight.bold)),
               pw.SizedBox(height: 40),
               pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text('MULTI-SERVICE ITAOSY ANDRANONAHOATRA',
                         style: const pw.TextStyle(fontSize: 12)),
-                    pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.start,
+                    pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
-                          pw.Text('Doit:',
-                              style: const pw.TextStyle(
-                                  fontSize: 12,
-                                  decoration: pw.TextDecoration.underline)),
-                          pw.Text(' $client',
-                              style: const pw.TextStyle(fontSize: 12)),
-                        ])
+                          pw.Row(
+                              mainAxisAlignment: pw.MainAxisAlignment.start,
+                              children: [
+                                pw.Text('Doit:',
+                                    style: const pw.TextStyle(
+                                        fontSize: 12,
+                                        decoration:
+                                            pw.TextDecoration.underline)),
+                                pw.Text(' $client',
+                                    style: const pw.TextStyle(fontSize: 12)),
+                              ]),
+                          pw.Row(
+                              mainAxisAlignment: pw.MainAxisAlignment.start,
+                              children: [
+                                pw.Text('Date:',
+                                    style: const pw.TextStyle(
+                                        fontSize: 12,
+                                        decoration:
+                                            pw.TextDecoration.underline)),
+                                pw.Text(
+                                    ' ${DateTime.now().day.toString().length == 1 ? '0' : ''}${DateTime.now().day}/${DateTime.now().month.toString().length == 1 ? '0' : ''}${DateTime.now().month}/${DateTime.now().year}',
+                                    style: const pw.TextStyle(fontSize: 12)),
+                              ]),
+                        ]),
                   ]),
               pw.SizedBox(height: 20),
               pw.TableHelper.fromTextArray(
@@ -136,7 +154,7 @@ class InvoiceService extends GetxService {
                   4: pw.Alignment.centerRight,
                 },
                 headers: <String>[
-                  'N°',
+                  'N',
                   'Désignation',
                   'Quantité',
                   'PU (en Ar)',
@@ -152,7 +170,7 @@ class InvoiceService extends GetxService {
                 // ),
                 data: listInvoiceLine.mapIndexed((index, operation) {
                   return <String>[
-                    '$index',
+                    '${index + 1}',
                     operation.nomOperation,
                     operation.quantiteOperation.toString(),
                     operation.prixOperation.toString(),
@@ -193,6 +211,8 @@ class InvoiceService extends GetxService {
 
     // final output = await getTemporaryDirectory();
     // final file = File("${output.path}\invoice.pdf");
+
+    // TODO add suffix when facture name already exist
 
     final file = File(
         "C:\\Users\\${_getWindowsUsername()}\\Desktop\\facture ${client.trim()}.pdf");
