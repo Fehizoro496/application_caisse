@@ -19,7 +19,14 @@ class PrelevementController extends GetxController {
 
   void savePrelelevement(PrelevementModel prelevement) {
     savePrelelevementToDatabase(prelevement).then((value) {
-      Get.snackbar('prel OK', 'prel OK');
+      Get.snackbar(
+        "Prélèvement Effectué",
+        "Prélèvement enregistré avec succès!",
+        snackPosition: SnackPosition.TOP,
+        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 70.0),
+        backgroundColor: const Color.fromARGB(175, 0, 225, 0),
+        colorText: Colors.white,
+      );
       listPrelevement.add(PrelevementModel(
         montant: prelevement.montant,
         datePrelevement: DateTime.now(),

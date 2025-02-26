@@ -1,3 +1,4 @@
+import 'package:application_caisse/format_number.dart';
 import 'package:flutter/material.dart';
 import 'package:application_caisse/model/operation_model.dart';
 import 'package:application_caisse/controller/main_controller.dart';
@@ -7,7 +8,8 @@ Widget invoiceLineView(int index, OperationModel operation) {
   final MainController controller = Get.find<MainController>();
 
   return ListTile(
-    title: Text("${operation.nomOperation}\t x${operation.quantiteOperation}"),
+    title: Text(
+        "${operation.nomOperation}\t x${formatNumber(operation.quantiteOperation)}"),
     trailing: Wrap(
       spacing: 4,
       children: [
@@ -31,7 +33,7 @@ Widget invoiceLineView(int index, OperationModel operation) {
       ],
     ),
     subtitle: Text(
-        "${(operation.prixOperation * operation.quantiteOperation).toString()} Ar"),
+        "${formatNumber(operation.prixOperation * operation.quantiteOperation)} Ar"),
     selected: false,
   );
 }

@@ -18,7 +18,7 @@ class MyDrawer extends StatelessWidget {
               leading: Icon(Icons.home),
               title: Text('Entrant'),
             ),
-            onTap: () => Get.to(MainPage()),
+            onTap: () => Get.to(() => MainPage()),
           ),
           // Navigation to services page
           InkWell(
@@ -26,14 +26,14 @@ class MyDrawer extends StatelessWidget {
               // leading: Icon(Icons.home),
               title: Text('Dépense'),
             ),
-            onTap: () => Get.to(DepensePage()),
+            onTap: () => Get.to(() => DepensePage()),
           ),
           InkWell(
             child: const ListTile(
               // leading: Icon(Icons.home),
               title: Text('Prélèvement'),
             ),
-            onTap: () => Get.to(() => PrelevementPage()),
+            onTap: () => Get.to(() => const PrelevementPage()),
           ),
         ],
       ),

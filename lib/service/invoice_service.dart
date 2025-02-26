@@ -1,7 +1,7 @@
+import 'package:application_caisse/format_number.dart';
 import 'package:collection/collection.dart';
 import 'package:application_caisse/chiffre_en_lettre.dart';
 import 'package:get/get.dart';
-// import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -88,7 +88,7 @@ class InvoiceService extends GetxService {
     }
 
     pw.Document pdf = pw.Document();
-    double total = 0;
+    int total = 0;
     for (var element in listInvoiceLine) {
       total += element.prixOperation * element.quantiteOperation;
     }
@@ -106,8 +106,14 @@ class InvoiceService extends GetxService {
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
-                    pw.Text('MULTI-SERVICE ITAOSY ANDRANONAHOATRA',
-                        style: const pw.TextStyle(fontSize: 12)),
+                    pw.Column(
+                      children: [
+                        pw.Text('MULTI-SERVICE ITAOSY ANDRANONAHOATRA',
+                            style: const pw.TextStyle(fontSize: 12)),
+                        pw.Text('033 60 371 38',
+                            style: const pw.TextStyle(fontSize: 12)),
+                      ],
+                    ),
                     pw.Column(
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
@@ -139,6 +145,25 @@ class InvoiceService extends GetxService {
               pw.SizedBox(height: 20),
               pw.TableHelper.fromTextArray(
                 headerAlignment: pw.Alignment.center,
+                cellStyle: const pw.TextStyle(
+                  fontSize: 10,
+                ),
+                cellDecoration: (index, row, col) {
+                  if (index == listInvoiceLine.length &&
+                      (col == 3 || col == 4)) {
+                    return const pw.BoxDecoration(
+                        border: pw.Border(
+                      top: pw.BorderSide(width: 1),
+                      bottom: pw.BorderSide(width: 1),
+                    ));
+                  }
+                  if (index != listInvoiceLine.length) {
+                    return pw.BoxDecoration(
+                      border: pw.Border.all(width: 1),
+                    );
+                  }
+                  return const pw.BoxDecoration();
+                },
                 columnWidths: const {
                   0: pw.FractionColumnWidth(0.05),
                   1: pw.FractionColumnWidth(0.35),
@@ -160,33 +185,17 @@ class InvoiceService extends GetxService {
                   'PU (en Ar)',
                   'Total'
                 ],
-                // border: const pw.TableBorder(
-                //   verticalInside: pw.BorderSide.none,
-                //   horizontalInside: pw.BorderSide(color: PdfColors.black),
-                //   right: pw.BorderSide(color: PdfColors.black),
-                //   left: pw.BorderSide(color: PdfColors.black),
-                //   bottom: pw.BorderSide(color: PdfColors.black),
-                //   top: pw.BorderSide(color: PdfColors.black),
-                // ),
-                data: listInvoiceLine.mapIndexed((index, operation) {
-                  return <String>[
-                    '${index + 1}',
-                    operation.nomOperation,
-                    operation.quantiteOperation.toString(),
-                    operation.prixOperation.toString(),
-                    "${operation.quantiteOperation * operation.prixOperation} Ar"
-                  ];
-                }).toList(),
-              ),
-              pw.SizedBox(height: 20),
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.SizedBox(),
-                  pw.Text(
-                    'Total: ${total.ceil()} Ar',
-                    style: const pw.TextStyle(fontSize: 18),
-                  ),
+                data: [
+                  ...listInvoiceLine.mapIndexed((index, operation) {
+                    return <String>[
+                      '${index + 1}',
+                      operation.nomOperation,
+                      formatNumber(operation.quantiteOperation),
+                      formatNumber(operation.prixOperation),
+                      "${formatNumber(operation.quantiteOperation * operation.prixOperation)} Ar"
+                    ];
+                  }).toList(),
+                  ['', '', '', 'TOTAL', "${formatNumber(total)} Ar"],
                 ],
               ),
               pw.SizedBox(height: 20),
@@ -198,7 +207,7 @@ class InvoiceService extends GetxService {
                 children: [
                   pw.SizedBox(),
                   pw.Text(
-                    'Le fournisseur',
+                    'Le responsable',
                     style: const pw.TextStyle(fontSize: 12),
                   ),
                 ],

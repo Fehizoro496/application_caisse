@@ -1,3 +1,4 @@
+import 'package:application_caisse/format_number.dart';
 import 'package:flutter/material.dart';
 import 'package:application_caisse/view/widget/invoice_line_view.dart';
 import 'package:application_caisse/controller/main_controller.dart';
@@ -40,7 +41,7 @@ Widget invoiceListView() {
                   style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16.0),
                 ),
                 Text(
-                  '${controller.total} Ar',
+                  '${formatNumber(controller.total)} Ar',
                   style: const TextStyle(
                       fontWeight: FontWeight.w500, fontSize: 16.0),
                 )

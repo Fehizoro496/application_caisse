@@ -14,7 +14,7 @@ class MainController extends GetxController {
   TextEditingController designationController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
   TextEditingController priceController = TextEditingController();
-  double total = 0;
+  int total = 0;
 
   final DBService dbService = Get.find();
   final InvoiceService invoiceService = Get.put(InvoiceService());
