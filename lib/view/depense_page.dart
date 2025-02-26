@@ -1,3 +1,4 @@
+import 'package:application_caisse/view/widget/my_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:application_caisse/controller/depense_controller.dart';
@@ -19,6 +20,7 @@ class DepensePage extends StatelessWidget {
         foregroundColor: Colors.white,
         title: Text(title),
       ),
+      drawer: const MyDrawer(),
       body: Container(
         color: Colors.grey[100],
         child: Center(

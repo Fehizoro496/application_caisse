@@ -1,3 +1,4 @@
+import 'package:application_caisse/model/prelevement_model.dart';
 import 'package:get/get.dart';
 import 'package:application_caisse/persistance/database.dart';
 import 'package:application_caisse/model/operation_model.dart';
@@ -59,7 +60,20 @@ class DBService extends GetxService {
     List<Operation> out = await database.select(database.operations).get();
     return out;
   }
+
+  Future<List<Prelevement>> getAllPrelevements() async {
+    List<Prelevement> out = await database.select(database.prelevements).get();
+    return out;
+  }
+
+  Future<int> savePrelevement(PrelevementModel prelevement) async {
+    return await database.into(database.prelevements).insert(
+        PrelevementsCompanion.insert(
+            montant: prelevement.montant,
+            datePrelevement:
+                prelevement.datePrelevement ?? DateTime.timestamp()));
+  }
 }
 
-// dart run drift_dev schema dump lib/database.dart db_schemas
+// dart run drift_dev schema dump lib/persistance/database.dart db_schemas
 // dart run build_runner build --delete-conflicting-outputs

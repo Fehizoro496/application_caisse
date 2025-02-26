@@ -2,11 +2,11 @@ import 'package:collection/collection.dart';
 import 'package:application_caisse/chiffre_en_lettre.dart';
 import 'package:get/get.dart';
 // import 'package:pdf/pdf.dart';
-import '../model/operation_model.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'dart:io';
 import 'package:flutter/material.dart';
 import './db_service.dart';
+import '../model/operation_model.dart';
 
 class InvoiceService extends GetxService {
   List<OperationModel> listInvoiceLine = [];
@@ -141,8 +141,8 @@ class InvoiceService extends GetxService {
                 headerAlignment: pw.Alignment.center,
                 columnWidths: const {
                   0: pw.FractionColumnWidth(0.05),
-                  1: pw.FractionColumnWidth(0.30),
-                  2: pw.FractionColumnWidth(0.2),
+                  1: pw.FractionColumnWidth(0.35),
+                  2: pw.FractionColumnWidth(0.15),
                   3: pw.FractionColumnWidth(0.2),
                   4: pw.FractionColumnWidth(0.25),
                 },
@@ -184,7 +184,7 @@ class InvoiceService extends GetxService {
                 children: [
                   pw.SizedBox(),
                   pw.Text(
-                    'Total: $total Ar',
+                    'Total: ${total.ceil()} Ar',
                     style: const pw.TextStyle(fontSize: 18),
                   ),
                 ],
@@ -212,10 +212,8 @@ class InvoiceService extends GetxService {
     // final output = await getTemporaryDirectory();
     // final file = File("${output.path}\invoice.pdf");
 
-    // TODO add suffix when facture name already exist
-
     final file = File(
-        "C:\\Users\\${_getWindowsUsername()}\\Desktop\\facture ${client.trim()}.pdf");
+        "C:\\Users\\${_getWindowsUsername()}\\Desktop\\facture N°$factureID ${client.trim()}.pdf");
     await file.writeAsBytes(await pdf.save()).then((value) {
       Get.snackbar(
         'PDF Generated',
@@ -234,4 +232,14 @@ class InvoiceService extends GetxService {
   String _getWindowsUsername() {
     return Platform.environment['USERNAME'] ?? 'Utilisateur inconnu';
   }
+
+  // String formatNumber(int i) {
+  //   List<String> tab = [];
+  //   int temp = i;
+  //   while (temp > 0) {
+  //     tab.add('${temp % 1000}');
+  //     temp = (temp / 1000).ceil();
+  //   }
+  //   return tab.reversed.toList().join(' ');
+  // }
 }

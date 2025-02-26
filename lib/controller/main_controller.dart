@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:application_caisse/service/invoice_service.dart';
 import 'package:get/get.dart';
 import '../model/operation_model.dart';
@@ -40,14 +39,16 @@ class MainController extends GetxController {
   }
 
   Future<bool> fillIDList() async {
+    bool out = true;
     for (var operation in listInvoiceLine) {
       await _saveOperationToDatabase(operation)
           .then((value) => listOperationsID.add(value))
           .catchError((error) {
-        return false;
+        out = false;
+        // return false;
       });
     }
-    return true;
+    return out;
   }
 
   void _confirmDialog() {

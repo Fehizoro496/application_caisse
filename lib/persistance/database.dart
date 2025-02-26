@@ -32,7 +32,20 @@ class Factures extends Table {
   DateTimeColumn get dateFacture => dateTime()();
 }
 
-@DriftDatabase(tables: [Operations, Factures, Depenses])
+class ReglementsFacture extends Table {
+  IntColumn get idReglement => integer().autoIncrement()();
+  IntColumn get montant => integer()();
+  DateTimeColumn get dateReglement => dateTime()();
+  IntColumn get facture => integer().references(Factures, #idFacture)();
+}
+
+class Prelevements extends Table {
+  IntColumn get idPrelevement => integer().autoIncrement()();
+  IntColumn get montant => integer()();
+  DateTimeColumn get datePrelevement => dateTime()();
+}
+
+@DriftDatabase(tables: [Operations, Factures, Depenses, Prelevements])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 

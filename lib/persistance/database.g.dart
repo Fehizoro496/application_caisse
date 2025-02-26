@@ -819,15 +819,236 @@ class DepensesCompanion extends UpdateCompanion<Depense> {
   }
 }
 
+class $PrelevementsTable extends Prelevements
+    with TableInfo<$PrelevementsTable, Prelevement> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PrelevementsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idPrelevementMeta =
+      const VerificationMeta('idPrelevement');
+  @override
+  late final GeneratedColumn<int> idPrelevement = GeneratedColumn<int>(
+      'id_prelevement', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _montantMeta =
+      const VerificationMeta('montant');
+  @override
+  late final GeneratedColumn<int> montant = GeneratedColumn<int>(
+      'montant', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _datePrelevementMeta =
+      const VerificationMeta('datePrelevement');
+  @override
+  late final GeneratedColumn<DateTime> datePrelevement =
+      GeneratedColumn<DateTime>('date_prelevement', aliasedName, false,
+          type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [idPrelevement, montant, datePrelevement];
+  @override
+  String get aliasedName => _alias ?? 'prelevements';
+  @override
+  String get actualTableName => 'prelevements';
+  @override
+  VerificationContext validateIntegrity(Insertable<Prelevement> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id_prelevement')) {
+      context.handle(
+          _idPrelevementMeta,
+          idPrelevement.isAcceptableOrUnknown(
+              data['id_prelevement']!, _idPrelevementMeta));
+    }
+    if (data.containsKey('montant')) {
+      context.handle(_montantMeta,
+          montant.isAcceptableOrUnknown(data['montant']!, _montantMeta));
+    } else if (isInserting) {
+      context.missing(_montantMeta);
+    }
+    if (data.containsKey('date_prelevement')) {
+      context.handle(
+          _datePrelevementMeta,
+          datePrelevement.isAcceptableOrUnknown(
+              data['date_prelevement']!, _datePrelevementMeta));
+    } else if (isInserting) {
+      context.missing(_datePrelevementMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {idPrelevement};
+  @override
+  Prelevement map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Prelevement(
+      idPrelevement: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id_prelevement'])!,
+      montant: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}montant'])!,
+      datePrelevement: attachedDatabase.typeMapping.read(
+          DriftSqlType.dateTime, data['${effectivePrefix}date_prelevement'])!,
+    );
+  }
+
+  @override
+  $PrelevementsTable createAlias(String alias) {
+    return $PrelevementsTable(attachedDatabase, alias);
+  }
+}
+
+class Prelevement extends DataClass implements Insertable<Prelevement> {
+  final int idPrelevement;
+  final int montant;
+  final DateTime datePrelevement;
+  const Prelevement(
+      {required this.idPrelevement,
+      required this.montant,
+      required this.datePrelevement});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id_prelevement'] = Variable<int>(idPrelevement);
+    map['montant'] = Variable<int>(montant);
+    map['date_prelevement'] = Variable<DateTime>(datePrelevement);
+    return map;
+  }
+
+  PrelevementsCompanion toCompanion(bool nullToAbsent) {
+    return PrelevementsCompanion(
+      idPrelevement: Value(idPrelevement),
+      montant: Value(montant),
+      datePrelevement: Value(datePrelevement),
+    );
+  }
+
+  factory Prelevement.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Prelevement(
+      idPrelevement: serializer.fromJson<int>(json['idPrelevement']),
+      montant: serializer.fromJson<int>(json['montant']),
+      datePrelevement: serializer.fromJson<DateTime>(json['datePrelevement']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'idPrelevement': serializer.toJson<int>(idPrelevement),
+      'montant': serializer.toJson<int>(montant),
+      'datePrelevement': serializer.toJson<DateTime>(datePrelevement),
+    };
+  }
+
+  Prelevement copyWith(
+          {int? idPrelevement, int? montant, DateTime? datePrelevement}) =>
+      Prelevement(
+        idPrelevement: idPrelevement ?? this.idPrelevement,
+        montant: montant ?? this.montant,
+        datePrelevement: datePrelevement ?? this.datePrelevement,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Prelevement(')
+          ..write('idPrelevement: $idPrelevement, ')
+          ..write('montant: $montant, ')
+          ..write('datePrelevement: $datePrelevement')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(idPrelevement, montant, datePrelevement);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Prelevement &&
+          other.idPrelevement == this.idPrelevement &&
+          other.montant == this.montant &&
+          other.datePrelevement == this.datePrelevement);
+}
+
+class PrelevementsCompanion extends UpdateCompanion<Prelevement> {
+  final Value<int> idPrelevement;
+  final Value<int> montant;
+  final Value<DateTime> datePrelevement;
+  const PrelevementsCompanion({
+    this.idPrelevement = const Value.absent(),
+    this.montant = const Value.absent(),
+    this.datePrelevement = const Value.absent(),
+  });
+  PrelevementsCompanion.insert({
+    this.idPrelevement = const Value.absent(),
+    required int montant,
+    required DateTime datePrelevement,
+  })  : montant = Value(montant),
+        datePrelevement = Value(datePrelevement);
+  static Insertable<Prelevement> custom({
+    Expression<int>? idPrelevement,
+    Expression<int>? montant,
+    Expression<DateTime>? datePrelevement,
+  }) {
+    return RawValuesInsertable({
+      if (idPrelevement != null) 'id_prelevement': idPrelevement,
+      if (montant != null) 'montant': montant,
+      if (datePrelevement != null) 'date_prelevement': datePrelevement,
+    });
+  }
+
+  PrelevementsCompanion copyWith(
+      {Value<int>? idPrelevement,
+      Value<int>? montant,
+      Value<DateTime>? datePrelevement}) {
+    return PrelevementsCompanion(
+      idPrelevement: idPrelevement ?? this.idPrelevement,
+      montant: montant ?? this.montant,
+      datePrelevement: datePrelevement ?? this.datePrelevement,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (idPrelevement.present) {
+      map['id_prelevement'] = Variable<int>(idPrelevement.value);
+    }
+    if (montant.present) {
+      map['montant'] = Variable<int>(montant.value);
+    }
+    if (datePrelevement.present) {
+      map['date_prelevement'] = Variable<DateTime>(datePrelevement.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PrelevementsCompanion(')
+          ..write('idPrelevement: $idPrelevement, ')
+          ..write('montant: $montant, ')
+          ..write('datePrelevement: $datePrelevement')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   late final $FacturesTable factures = $FacturesTable(this);
   late final $OperationsTable operations = $OperationsTable(this);
   late final $DepensesTable depenses = $DepensesTable(this);
+  late final $PrelevementsTable prelevements = $PrelevementsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [factures, operations, depenses];
+      [factures, operations, depenses, prelevements];
 }
