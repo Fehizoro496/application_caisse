@@ -1,3 +1,4 @@
+import 'package:application_caisse/model/releve_model.dart';
 import 'package:application_caisse/model/prelevement_model.dart';
 import 'package:get/get.dart';
 import 'package:application_caisse/persistance/database.dart';
@@ -72,6 +73,18 @@ class DBService extends GetxService {
             montant: prelevement.montant,
             datePrelevement:
                 prelevement.datePrelevement ?? DateTime.timestamp()));
+  }
+
+  Future<List<Releve>> getAllReleves() async {
+    List<Releve> out = await database.select(database.releves).get();
+    return out;
+  }
+
+  Future<int> saveReleve(ReleveModel releve) async {
+    return await database.into(database.releves).insert(RelevesCompanion.insert(
+        compteur: releve.compteur,
+        sousCompteur: releve.sousCompteur,
+        dateReleve: releve.dateReleve ?? DateTime.timestamp()));
   }
 }
 

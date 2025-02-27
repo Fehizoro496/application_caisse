@@ -20,6 +20,7 @@ class MainPage extends StatelessWidget {
       drawer: const MyDrawer(),
       // App bar with title and actions
       appBar: AppBar(
+        centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,

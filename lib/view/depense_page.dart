@@ -16,6 +16,7 @@ class DepensePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Colors.red,
         foregroundColor: Colors.white,
         title: Text(title),

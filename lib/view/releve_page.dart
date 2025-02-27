@@ -1,20 +1,18 @@
-// import 'package:application_caisse/controller/prelevement_controller.dart';
+import 'package:application_caisse/view/widget/releve_list_view.dart';
+import 'package:application_caisse/view/widget/releve_form.dart';
 import 'package:application_caisse/view/widget/my_drawer.dart';
-import 'package:application_caisse/view/widget/prelevement_form.dart';
-import 'package:application_caisse/view/widget/prelevement_list_view.dart';
 import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
 
-class PrelevementPage extends StatelessWidget {
-  const PrelevementPage({super.key});
+class RelevePage extends StatelessWidget {
+  const RelevePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Prélèvement'),
-        backgroundColor: Colors.lightGreen,
+        title: const Text('Relevé'),
+        backgroundColor: Colors.amber,
         foregroundColor: Colors.white,
       ),
       drawer: const MyDrawer(),
@@ -25,9 +23,9 @@ class PrelevementPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               // Input form widget
-              PrelevementForm(),
+              ReleveForm(),
               // Invoice list view widget
-              prelevementListView(),
+              releveListView(),
             ],
           ),
         ),

@@ -1,12 +1,11 @@
-import 'package:application_caisse/format_number.dart';
 import 'package:application_caisse/what_day.dart';
 import 'package:flutter/material.dart';
-import 'package:application_caisse/controller/prelevement_controller.dart';
+import 'package:application_caisse/controller/releve_controller.dart';
 import 'package:get/get.dart';
 
-Widget prelevementListView() {
-  return GetBuilder<PrelevementController>(builder: (context) {
-    PrelevementController controller = Get.find<PrelevementController>();
+Widget releveListView() {
+  return GetBuilder<ReleveController>(builder: (context) {
+    ReleveController controller = Get.find<ReleveController>();
     // Create a new ScrollController for this instance
     final ScrollController scrollController = ScrollController();
 
@@ -18,12 +17,12 @@ Widget prelevementListView() {
           color: Colors.white,
         ),
         child: FutureBuilder(
-          future: controller.getAllPrelevements(),
+          future: controller.getAllReleves(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                   child: CircularProgressIndicator(
-                color: Colors.green,
+                color: Colors.amber,
               ));
             } else if (snapshot.hasData) {
               // Schedule scroll to bottom after build
@@ -38,20 +37,21 @@ Widget prelevementListView() {
                 controller: scrollController,
                 itemCount: snapshot.data?.length,
                 itemBuilder: (context, index) {
-                  var prelevement = snapshot.data?[index];
+                  var releve = snapshot.data?[index];
                   return Column(
                     children: [
                       ListTile(
-                        title: Text(formatNumber(prelevement!.montant)),
+                        title: Text('${releve!.compteur}'),
+                        subtitle: Text('${releve.sousCompteur}'),
                         trailing: Wrap(
                           direction: Axis.vertical,
                           crossAxisAlignment: WrapCrossAlignment.end,
                           spacing: 4,
                           children: [
                             Text(
-                                '${whatDay(prelevement.datePrelevement)}\t${prelevement.datePrelevement.day}/${prelevement.datePrelevement.month}/${prelevement.datePrelevement.year}'),
+                                '${whatDay(releve.dateReleve)}\t${releve.dateReleve.day}/${releve.dateReleve.month}/${releve.dateReleve.year}'),
                             Text(
-                                '${prelevement.datePrelevement.hour}:${prelevement.datePrelevement.minute}'),
+                                '${releve.dateReleve.hour}:${releve.dateReleve.minute}'),
                           ],
                         ),
                       ),

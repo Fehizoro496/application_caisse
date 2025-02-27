@@ -1039,16 +1039,274 @@ class PrelevementsCompanion extends UpdateCompanion<Prelevement> {
   }
 }
 
+class $RelevesTable extends Releves with TableInfo<$RelevesTable, Releve> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RelevesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idReleveMeta =
+      const VerificationMeta('idReleve');
+  @override
+  late final GeneratedColumn<int> idReleve = GeneratedColumn<int>(
+      'id_releve', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _compteurMeta =
+      const VerificationMeta('compteur');
+  @override
+  late final GeneratedColumn<double> compteur = GeneratedColumn<double>(
+      'compteur', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _sousCompteurMeta =
+      const VerificationMeta('sousCompteur');
+  @override
+  late final GeneratedColumn<double> sousCompteur = GeneratedColumn<double>(
+      'sous_compteur', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _dateReleveMeta =
+      const VerificationMeta('dateReleve');
+  @override
+  late final GeneratedColumn<DateTime> dateReleve = GeneratedColumn<DateTime>(
+      'date_releve', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [idReleve, compteur, sousCompteur, dateReleve];
+  @override
+  String get aliasedName => _alias ?? 'releves';
+  @override
+  String get actualTableName => 'releves';
+  @override
+  VerificationContext validateIntegrity(Insertable<Releve> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id_releve')) {
+      context.handle(_idReleveMeta,
+          idReleve.isAcceptableOrUnknown(data['id_releve']!, _idReleveMeta));
+    }
+    if (data.containsKey('compteur')) {
+      context.handle(_compteurMeta,
+          compteur.isAcceptableOrUnknown(data['compteur']!, _compteurMeta));
+    } else if (isInserting) {
+      context.missing(_compteurMeta);
+    }
+    if (data.containsKey('sous_compteur')) {
+      context.handle(
+          _sousCompteurMeta,
+          sousCompteur.isAcceptableOrUnknown(
+              data['sous_compteur']!, _sousCompteurMeta));
+    } else if (isInserting) {
+      context.missing(_sousCompteurMeta);
+    }
+    if (data.containsKey('date_releve')) {
+      context.handle(
+          _dateReleveMeta,
+          dateReleve.isAcceptableOrUnknown(
+              data['date_releve']!, _dateReleveMeta));
+    } else if (isInserting) {
+      context.missing(_dateReleveMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {idReleve};
+  @override
+  Releve map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Releve(
+      idReleve: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id_releve'])!,
+      compteur: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}compteur'])!,
+      sousCompteur: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}sous_compteur'])!,
+      dateReleve: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}date_releve'])!,
+    );
+  }
+
+  @override
+  $RelevesTable createAlias(String alias) {
+    return $RelevesTable(attachedDatabase, alias);
+  }
+}
+
+class Releve extends DataClass implements Insertable<Releve> {
+  final int idReleve;
+  final double compteur;
+  final double sousCompteur;
+  final DateTime dateReleve;
+  const Releve(
+      {required this.idReleve,
+      required this.compteur,
+      required this.sousCompteur,
+      required this.dateReleve});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id_releve'] = Variable<int>(idReleve);
+    map['compteur'] = Variable<double>(compteur);
+    map['sous_compteur'] = Variable<double>(sousCompteur);
+    map['date_releve'] = Variable<DateTime>(dateReleve);
+    return map;
+  }
+
+  RelevesCompanion toCompanion(bool nullToAbsent) {
+    return RelevesCompanion(
+      idReleve: Value(idReleve),
+      compteur: Value(compteur),
+      sousCompteur: Value(sousCompteur),
+      dateReleve: Value(dateReleve),
+    );
+  }
+
+  factory Releve.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Releve(
+      idReleve: serializer.fromJson<int>(json['idReleve']),
+      compteur: serializer.fromJson<double>(json['compteur']),
+      sousCompteur: serializer.fromJson<double>(json['sousCompteur']),
+      dateReleve: serializer.fromJson<DateTime>(json['dateReleve']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'idReleve': serializer.toJson<int>(idReleve),
+      'compteur': serializer.toJson<double>(compteur),
+      'sousCompteur': serializer.toJson<double>(sousCompteur),
+      'dateReleve': serializer.toJson<DateTime>(dateReleve),
+    };
+  }
+
+  Releve copyWith(
+          {int? idReleve,
+          double? compteur,
+          double? sousCompteur,
+          DateTime? dateReleve}) =>
+      Releve(
+        idReleve: idReleve ?? this.idReleve,
+        compteur: compteur ?? this.compteur,
+        sousCompteur: sousCompteur ?? this.sousCompteur,
+        dateReleve: dateReleve ?? this.dateReleve,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Releve(')
+          ..write('idReleve: $idReleve, ')
+          ..write('compteur: $compteur, ')
+          ..write('sousCompteur: $sousCompteur, ')
+          ..write('dateReleve: $dateReleve')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(idReleve, compteur, sousCompteur, dateReleve);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Releve &&
+          other.idReleve == this.idReleve &&
+          other.compteur == this.compteur &&
+          other.sousCompteur == this.sousCompteur &&
+          other.dateReleve == this.dateReleve);
+}
+
+class RelevesCompanion extends UpdateCompanion<Releve> {
+  final Value<int> idReleve;
+  final Value<double> compteur;
+  final Value<double> sousCompteur;
+  final Value<DateTime> dateReleve;
+  const RelevesCompanion({
+    this.idReleve = const Value.absent(),
+    this.compteur = const Value.absent(),
+    this.sousCompteur = const Value.absent(),
+    this.dateReleve = const Value.absent(),
+  });
+  RelevesCompanion.insert({
+    this.idReleve = const Value.absent(),
+    required double compteur,
+    required double sousCompteur,
+    required DateTime dateReleve,
+  })  : compteur = Value(compteur),
+        sousCompteur = Value(sousCompteur),
+        dateReleve = Value(dateReleve);
+  static Insertable<Releve> custom({
+    Expression<int>? idReleve,
+    Expression<double>? compteur,
+    Expression<double>? sousCompteur,
+    Expression<DateTime>? dateReleve,
+  }) {
+    return RawValuesInsertable({
+      if (idReleve != null) 'id_releve': idReleve,
+      if (compteur != null) 'compteur': compteur,
+      if (sousCompteur != null) 'sous_compteur': sousCompteur,
+      if (dateReleve != null) 'date_releve': dateReleve,
+    });
+  }
+
+  RelevesCompanion copyWith(
+      {Value<int>? idReleve,
+      Value<double>? compteur,
+      Value<double>? sousCompteur,
+      Value<DateTime>? dateReleve}) {
+    return RelevesCompanion(
+      idReleve: idReleve ?? this.idReleve,
+      compteur: compteur ?? this.compteur,
+      sousCompteur: sousCompteur ?? this.sousCompteur,
+      dateReleve: dateReleve ?? this.dateReleve,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (idReleve.present) {
+      map['id_releve'] = Variable<int>(idReleve.value);
+    }
+    if (compteur.present) {
+      map['compteur'] = Variable<double>(compteur.value);
+    }
+    if (sousCompteur.present) {
+      map['sous_compteur'] = Variable<double>(sousCompteur.value);
+    }
+    if (dateReleve.present) {
+      map['date_releve'] = Variable<DateTime>(dateReleve.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RelevesCompanion(')
+          ..write('idReleve: $idReleve, ')
+          ..write('compteur: $compteur, ')
+          ..write('sousCompteur: $sousCompteur, ')
+          ..write('dateReleve: $dateReleve')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   late final $FacturesTable factures = $FacturesTable(this);
   late final $OperationsTable operations = $OperationsTable(this);
   late final $DepensesTable depenses = $DepensesTable(this);
   late final $PrelevementsTable prelevements = $PrelevementsTable(this);
+  late final $RelevesTable releves = $RelevesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [factures, operations, depenses, prelevements];
+      [factures, operations, depenses, prelevements, releves];
 }

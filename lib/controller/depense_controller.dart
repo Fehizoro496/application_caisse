@@ -19,12 +19,17 @@ class DepenseController extends GetxController {
             montant: int.parse(montantController.text),
             dateDepense: DateTime.timestamp()))
         .then((value) {
-      Get.back();
+      // Get.back();
+      _clearForm();
       _successSaveSnackbar();
-      // _clearForm();
     }).catchError((error) {
       _errorSaveSnackbar(error);
     });
+  }
+
+  void _clearForm() {
+    libelleController.clear();
+    montantController.clear();
   }
 
   void _successSaveSnackbar() {

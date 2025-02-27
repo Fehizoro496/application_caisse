@@ -1,6 +1,7 @@
 import 'package:application_caisse/view/depense_page.dart';
 import 'package:application_caisse/view/main_page.dart';
 import 'package:application_caisse/view/prelevement_page.dart';
+import 'package:application_caisse/view/releve_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,7 +16,6 @@ class MyDrawer extends StatelessWidget {
           // Navigation to home page
           InkWell(
             child: const ListTile(
-              leading: Icon(Icons.home),
               title: Text('Entrant'),
             ),
             onTap: () => Get.to(() => MainPage()),
@@ -34,6 +34,13 @@ class MyDrawer extends StatelessWidget {
               title: Text('Prélèvement'),
             ),
             onTap: () => Get.to(() => const PrelevementPage()),
+          ),
+          InkWell(
+            child: const ListTile(
+              // leading: Icon(Icons.home),
+              title: Text('Relevé'),
+            ),
+            onTap: () => Get.to(() => const RelevePage()),
           ),
         ],
       ),

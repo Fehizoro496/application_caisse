@@ -45,7 +45,14 @@ class Prelevements extends Table {
   DateTimeColumn get datePrelevement => dateTime()();
 }
 
-@DriftDatabase(tables: [Operations, Factures, Depenses, Prelevements])
+class Releves extends Table {
+  IntColumn get idReleve => integer().autoIncrement()();
+  RealColumn get compteur => real()();
+  RealColumn get sousCompteur => real()();
+  DateTimeColumn get dateReleve => dateTime()();
+}
+
+@DriftDatabase(tables: [Operations, Factures, Depenses, Prelevements, Releves])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
