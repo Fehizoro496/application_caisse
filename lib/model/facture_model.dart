@@ -1,5 +1,5 @@
 class FactureModel {
-  int? idFacture;
+  String? idFacture;
   late String client;
   // late int fournisseur;
   DateTime? dateFacture;

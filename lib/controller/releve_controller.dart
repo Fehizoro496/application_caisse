@@ -7,7 +7,22 @@ import '../service/db_service.dart';
 class ReleveController extends GetxController {
   TextEditingController compteurController = TextEditingController();
   TextEditingController sousCompteurController = TextEditingController();
+  late ReleveModel lastReleve = ReleveModel(compteur: 0.0, sousCompteur: 0.0);
   final DBService dbService = Get.find();
+
+  @override
+  void onInit() async {
+    dbService.getAllReleves().then((value) {
+      if (value.isNotEmpty) {
+        lastReleve = ReleveModel(
+            idReleve: value.last.idReleve,
+            compteur: value.last.compteur,
+            sousCompteur: value.last.sousCompteur,
+            dateReleve: value.last.dateReleve);
+      }
+    });
+    super.onInit();
+  }
 
   Future<List<Releve>> getAllReleves() {
     return dbService.getAllReleves();
@@ -29,6 +44,7 @@ class ReleveController extends GetxController {
       );
       compteurController.clear();
       sousCompteurController.clear();
+      lastReleve = releve;
     });
     update();
   }

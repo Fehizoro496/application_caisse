@@ -1,5 +1,5 @@
 class DepenseModel {
-  int? idDepense;
+  String? idDepense;
   late String libelle;
   late int montant;
   DateTime? dateDepense;

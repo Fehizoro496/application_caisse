@@ -25,6 +25,14 @@ class MainPage extends StatelessWidget {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         title: Text(title),
+        actions: [
+          TextButton(
+              onPressed: () => c.dbService.backupDatabaseToDesktop(),
+              child: const Text(
+                "Exporter",
+                style: TextStyle(color: Colors.white),
+              ))
+        ],
       ),
       // Main body content
       body: Container(

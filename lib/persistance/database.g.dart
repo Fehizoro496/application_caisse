@@ -11,13 +11,9 @@ class $FacturesTable extends Factures with TableInfo<$FacturesTable, Facture> {
   static const VerificationMeta _idFactureMeta =
       const VerificationMeta('idFacture');
   @override
-  late final GeneratedColumn<int> idFacture = GeneratedColumn<int>(
+  late final GeneratedColumn<String> idFacture = GeneratedColumn<String>(
       'id_facture', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _clientMeta = const VerificationMeta('client');
   @override
   late final GeneratedColumn<String> client = GeneratedColumn<String>(
@@ -43,6 +39,8 @@ class $FacturesTable extends Factures with TableInfo<$FacturesTable, Facture> {
     if (data.containsKey('id_facture')) {
       context.handle(_idFactureMeta,
           idFacture.isAcceptableOrUnknown(data['id_facture']!, _idFactureMeta));
+    } else if (isInserting) {
+      context.missing(_idFactureMeta);
     }
     if (data.containsKey('client')) {
       context.handle(_clientMeta,
@@ -62,13 +60,13 @@ class $FacturesTable extends Factures with TableInfo<$FacturesTable, Facture> {
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {idFacture};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
   Facture map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Facture(
       idFacture: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id_facture'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id_facture'])!,
       client: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}client'])!,
       dateFacture: attachedDatabase.typeMapping
@@ -83,7 +81,7 @@ class $FacturesTable extends Factures with TableInfo<$FacturesTable, Facture> {
 }
 
 class Facture extends DataClass implements Insertable<Facture> {
-  final int idFacture;
+  final String idFacture;
   final String client;
   final DateTime dateFacture;
   const Facture(
@@ -93,7 +91,7 @@ class Facture extends DataClass implements Insertable<Facture> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id_facture'] = Variable<int>(idFacture);
+    map['id_facture'] = Variable<String>(idFacture);
     map['client'] = Variable<String>(client);
     map['date_facture'] = Variable<DateTime>(dateFacture);
     return map;
@@ -111,7 +109,7 @@ class Facture extends DataClass implements Insertable<Facture> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Facture(
-      idFacture: serializer.fromJson<int>(json['idFacture']),
+      idFacture: serializer.fromJson<String>(json['idFacture']),
       client: serializer.fromJson<String>(json['client']),
       dateFacture: serializer.fromJson<DateTime>(json['dateFacture']),
     );
@@ -120,13 +118,14 @@ class Facture extends DataClass implements Insertable<Facture> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'idFacture': serializer.toJson<int>(idFacture),
+      'idFacture': serializer.toJson<String>(idFacture),
       'client': serializer.toJson<String>(client),
       'dateFacture': serializer.toJson<DateTime>(dateFacture),
     };
   }
 
-  Facture copyWith({int? idFacture, String? client, DateTime? dateFacture}) =>
+  Facture copyWith(
+          {String? idFacture, String? client, DateTime? dateFacture}) =>
       Facture(
         idFacture: idFacture ?? this.idFacture,
         client: client ?? this.client,
@@ -154,40 +153,48 @@ class Facture extends DataClass implements Insertable<Facture> {
 }
 
 class FacturesCompanion extends UpdateCompanion<Facture> {
-  final Value<int> idFacture;
+  final Value<String> idFacture;
   final Value<String> client;
   final Value<DateTime> dateFacture;
+  final Value<int> rowid;
   const FacturesCompanion({
     this.idFacture = const Value.absent(),
     this.client = const Value.absent(),
     this.dateFacture = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   FacturesCompanion.insert({
-    this.idFacture = const Value.absent(),
+    required String idFacture,
     required String client,
     required DateTime dateFacture,
-  })  : client = Value(client),
+    this.rowid = const Value.absent(),
+  })  : idFacture = Value(idFacture),
+        client = Value(client),
         dateFacture = Value(dateFacture);
   static Insertable<Facture> custom({
-    Expression<int>? idFacture,
+    Expression<String>? idFacture,
     Expression<String>? client,
     Expression<DateTime>? dateFacture,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (idFacture != null) 'id_facture': idFacture,
       if (client != null) 'client': client,
       if (dateFacture != null) 'date_facture': dateFacture,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   FacturesCompanion copyWith(
-      {Value<int>? idFacture,
+      {Value<String>? idFacture,
       Value<String>? client,
-      Value<DateTime>? dateFacture}) {
+      Value<DateTime>? dateFacture,
+      Value<int>? rowid}) {
     return FacturesCompanion(
       idFacture: idFacture ?? this.idFacture,
       client: client ?? this.client,
       dateFacture: dateFacture ?? this.dateFacture,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -195,13 +202,16 @@ class FacturesCompanion extends UpdateCompanion<Facture> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (idFacture.present) {
-      map['id_facture'] = Variable<int>(idFacture.value);
+      map['id_facture'] = Variable<String>(idFacture.value);
     }
     if (client.present) {
       map['client'] = Variable<String>(client.value);
     }
     if (dateFacture.present) {
       map['date_facture'] = Variable<DateTime>(dateFacture.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -211,7 +221,8 @@ class FacturesCompanion extends UpdateCompanion<Facture> {
     return (StringBuffer('FacturesCompanion(')
           ..write('idFacture: $idFacture, ')
           ..write('client: $client, ')
-          ..write('dateFacture: $dateFacture')
+          ..write('dateFacture: $dateFacture, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -226,13 +237,9 @@ class $OperationsTable extends Operations
   static const VerificationMeta _idOperationMeta =
       const VerificationMeta('idOperation');
   @override
-  late final GeneratedColumn<int> idOperation = GeneratedColumn<int>(
+  late final GeneratedColumn<String> idOperation = GeneratedColumn<String>(
       'id_operation', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _nomOperationMeta =
       const VerificationMeta('nomOperation');
   @override
@@ -254,9 +261,9 @@ class $OperationsTable extends Operations
   static const VerificationMeta _factureMeta =
       const VerificationMeta('facture');
   @override
-  late final GeneratedColumn<int> facture = GeneratedColumn<int>(
+  late final GeneratedColumn<String> facture = GeneratedColumn<String>(
       'facture', aliasedName, true,
-      type: DriftSqlType.int,
+      type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways(
           'REFERENCES factures (id_facture)'));
@@ -289,6 +296,8 @@ class $OperationsTable extends Operations
           _idOperationMeta,
           idOperation.isAcceptableOrUnknown(
               data['id_operation']!, _idOperationMeta));
+    } else if (isInserting) {
+      context.missing(_idOperationMeta);
     }
     if (data.containsKey('nom_operation')) {
       context.handle(
@@ -330,13 +339,13 @@ class $OperationsTable extends Operations
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {idOperation};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
   Operation map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Operation(
       idOperation: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id_operation'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id_operation'])!,
       nomOperation: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}nom_operation'])!,
       prixOperation: attachedDatabase.typeMapping
@@ -344,7 +353,7 @@ class $OperationsTable extends Operations
       quantiteOperation: attachedDatabase.typeMapping.read(
           DriftSqlType.int, data['${effectivePrefix}quantite_operation'])!,
       facture: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}facture']),
+          .read(DriftSqlType.string, data['${effectivePrefix}facture']),
       dateOperation: attachedDatabase.typeMapping.read(
           DriftSqlType.dateTime, data['${effectivePrefix}date_operation'])!,
     );
@@ -357,11 +366,11 @@ class $OperationsTable extends Operations
 }
 
 class Operation extends DataClass implements Insertable<Operation> {
-  final int idOperation;
+  final String idOperation;
   final String nomOperation;
   final int prixOperation;
   final int quantiteOperation;
-  final int? facture;
+  final String? facture;
   final DateTime dateOperation;
   const Operation(
       {required this.idOperation,
@@ -373,12 +382,12 @@ class Operation extends DataClass implements Insertable<Operation> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id_operation'] = Variable<int>(idOperation);
+    map['id_operation'] = Variable<String>(idOperation);
     map['nom_operation'] = Variable<String>(nomOperation);
     map['prix_operation'] = Variable<int>(prixOperation);
     map['quantite_operation'] = Variable<int>(quantiteOperation);
     if (!nullToAbsent || facture != null) {
-      map['facture'] = Variable<int>(facture);
+      map['facture'] = Variable<String>(facture);
     }
     map['date_operation'] = Variable<DateTime>(dateOperation);
     return map;
@@ -401,11 +410,11 @@ class Operation extends DataClass implements Insertable<Operation> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Operation(
-      idOperation: serializer.fromJson<int>(json['idOperation']),
+      idOperation: serializer.fromJson<String>(json['idOperation']),
       nomOperation: serializer.fromJson<String>(json['nomOperation']),
       prixOperation: serializer.fromJson<int>(json['prixOperation']),
       quantiteOperation: serializer.fromJson<int>(json['quantiteOperation']),
-      facture: serializer.fromJson<int?>(json['facture']),
+      facture: serializer.fromJson<String?>(json['facture']),
       dateOperation: serializer.fromJson<DateTime>(json['dateOperation']),
     );
   }
@@ -413,21 +422,21 @@ class Operation extends DataClass implements Insertable<Operation> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'idOperation': serializer.toJson<int>(idOperation),
+      'idOperation': serializer.toJson<String>(idOperation),
       'nomOperation': serializer.toJson<String>(nomOperation),
       'prixOperation': serializer.toJson<int>(prixOperation),
       'quantiteOperation': serializer.toJson<int>(quantiteOperation),
-      'facture': serializer.toJson<int?>(facture),
+      'facture': serializer.toJson<String?>(facture),
       'dateOperation': serializer.toJson<DateTime>(dateOperation),
     };
   }
 
   Operation copyWith(
-          {int? idOperation,
+          {String? idOperation,
           String? nomOperation,
           int? prixOperation,
           int? quantiteOperation,
-          Value<int?> facture = const Value.absent(),
+          Value<String?> facture = const Value.absent(),
           DateTime? dateOperation}) =>
       Operation(
         idOperation: idOperation ?? this.idOperation,
@@ -466,12 +475,13 @@ class Operation extends DataClass implements Insertable<Operation> {
 }
 
 class OperationsCompanion extends UpdateCompanion<Operation> {
-  final Value<int> idOperation;
+  final Value<String> idOperation;
   final Value<String> nomOperation;
   final Value<int> prixOperation;
   final Value<int> quantiteOperation;
-  final Value<int?> facture;
+  final Value<String?> facture;
   final Value<DateTime> dateOperation;
+  final Value<int> rowid;
   const OperationsCompanion({
     this.idOperation = const Value.absent(),
     this.nomOperation = const Value.absent(),
@@ -479,25 +489,29 @@ class OperationsCompanion extends UpdateCompanion<Operation> {
     this.quantiteOperation = const Value.absent(),
     this.facture = const Value.absent(),
     this.dateOperation = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   OperationsCompanion.insert({
-    this.idOperation = const Value.absent(),
+    required String idOperation,
     required String nomOperation,
     required int prixOperation,
     required int quantiteOperation,
     this.facture = const Value.absent(),
     required DateTime dateOperation,
-  })  : nomOperation = Value(nomOperation),
+    this.rowid = const Value.absent(),
+  })  : idOperation = Value(idOperation),
+        nomOperation = Value(nomOperation),
         prixOperation = Value(prixOperation),
         quantiteOperation = Value(quantiteOperation),
         dateOperation = Value(dateOperation);
   static Insertable<Operation> custom({
-    Expression<int>? idOperation,
+    Expression<String>? idOperation,
     Expression<String>? nomOperation,
     Expression<int>? prixOperation,
     Expression<int>? quantiteOperation,
-    Expression<int>? facture,
+    Expression<String>? facture,
     Expression<DateTime>? dateOperation,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (idOperation != null) 'id_operation': idOperation,
@@ -506,16 +520,18 @@ class OperationsCompanion extends UpdateCompanion<Operation> {
       if (quantiteOperation != null) 'quantite_operation': quantiteOperation,
       if (facture != null) 'facture': facture,
       if (dateOperation != null) 'date_operation': dateOperation,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   OperationsCompanion copyWith(
-      {Value<int>? idOperation,
+      {Value<String>? idOperation,
       Value<String>? nomOperation,
       Value<int>? prixOperation,
       Value<int>? quantiteOperation,
-      Value<int?>? facture,
-      Value<DateTime>? dateOperation}) {
+      Value<String?>? facture,
+      Value<DateTime>? dateOperation,
+      Value<int>? rowid}) {
     return OperationsCompanion(
       idOperation: idOperation ?? this.idOperation,
       nomOperation: nomOperation ?? this.nomOperation,
@@ -523,6 +539,7 @@ class OperationsCompanion extends UpdateCompanion<Operation> {
       quantiteOperation: quantiteOperation ?? this.quantiteOperation,
       facture: facture ?? this.facture,
       dateOperation: dateOperation ?? this.dateOperation,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -530,7 +547,7 @@ class OperationsCompanion extends UpdateCompanion<Operation> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (idOperation.present) {
-      map['id_operation'] = Variable<int>(idOperation.value);
+      map['id_operation'] = Variable<String>(idOperation.value);
     }
     if (nomOperation.present) {
       map['nom_operation'] = Variable<String>(nomOperation.value);
@@ -542,10 +559,13 @@ class OperationsCompanion extends UpdateCompanion<Operation> {
       map['quantite_operation'] = Variable<int>(quantiteOperation.value);
     }
     if (facture.present) {
-      map['facture'] = Variable<int>(facture.value);
+      map['facture'] = Variable<String>(facture.value);
     }
     if (dateOperation.present) {
       map['date_operation'] = Variable<DateTime>(dateOperation.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -558,7 +578,8 @@ class OperationsCompanion extends UpdateCompanion<Operation> {
           ..write('prixOperation: $prixOperation, ')
           ..write('quantiteOperation: $quantiteOperation, ')
           ..write('facture: $facture, ')
-          ..write('dateOperation: $dateOperation')
+          ..write('dateOperation: $dateOperation, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -572,13 +593,9 @@ class $DepensesTable extends Depenses with TableInfo<$DepensesTable, Depense> {
   static const VerificationMeta _idDepenseMeta =
       const VerificationMeta('idDepense');
   @override
-  late final GeneratedColumn<int> idDepense = GeneratedColumn<int>(
+  late final GeneratedColumn<String> idDepense = GeneratedColumn<String>(
       'id_depense', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _libelleMeta =
       const VerificationMeta('libelle');
   @override
@@ -612,6 +629,8 @@ class $DepensesTable extends Depenses with TableInfo<$DepensesTable, Depense> {
     if (data.containsKey('id_depense')) {
       context.handle(_idDepenseMeta,
           idDepense.isAcceptableOrUnknown(data['id_depense']!, _idDepenseMeta));
+    } else if (isInserting) {
+      context.missing(_idDepenseMeta);
     }
     if (data.containsKey('libelle')) {
       context.handle(_libelleMeta,
@@ -637,13 +656,13 @@ class $DepensesTable extends Depenses with TableInfo<$DepensesTable, Depense> {
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {idDepense};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
   Depense map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Depense(
       idDepense: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id_depense'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id_depense'])!,
       libelle: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}libelle'])!,
       montant: attachedDatabase.typeMapping
@@ -660,7 +679,7 @@ class $DepensesTable extends Depenses with TableInfo<$DepensesTable, Depense> {
 }
 
 class Depense extends DataClass implements Insertable<Depense> {
-  final int idDepense;
+  final String idDepense;
   final String libelle;
   final int montant;
   final DateTime dateDepense;
@@ -672,7 +691,7 @@ class Depense extends DataClass implements Insertable<Depense> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id_depense'] = Variable<int>(idDepense);
+    map['id_depense'] = Variable<String>(idDepense);
     map['libelle'] = Variable<String>(libelle);
     map['montant'] = Variable<int>(montant);
     map['date_depense'] = Variable<DateTime>(dateDepense);
@@ -692,7 +711,7 @@ class Depense extends DataClass implements Insertable<Depense> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Depense(
-      idDepense: serializer.fromJson<int>(json['idDepense']),
+      idDepense: serializer.fromJson<String>(json['idDepense']),
       libelle: serializer.fromJson<String>(json['libelle']),
       montant: serializer.fromJson<int>(json['montant']),
       dateDepense: serializer.fromJson<DateTime>(json['dateDepense']),
@@ -702,7 +721,7 @@ class Depense extends DataClass implements Insertable<Depense> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'idDepense': serializer.toJson<int>(idDepense),
+      'idDepense': serializer.toJson<String>(idDepense),
       'libelle': serializer.toJson<String>(libelle),
       'montant': serializer.toJson<int>(montant),
       'dateDepense': serializer.toJson<DateTime>(dateDepense),
@@ -710,7 +729,7 @@ class Depense extends DataClass implements Insertable<Depense> {
   }
 
   Depense copyWith(
-          {int? idDepense,
+          {String? idDepense,
           String? libelle,
           int? montant,
           DateTime? dateDepense}) =>
@@ -744,48 +763,56 @@ class Depense extends DataClass implements Insertable<Depense> {
 }
 
 class DepensesCompanion extends UpdateCompanion<Depense> {
-  final Value<int> idDepense;
+  final Value<String> idDepense;
   final Value<String> libelle;
   final Value<int> montant;
   final Value<DateTime> dateDepense;
+  final Value<int> rowid;
   const DepensesCompanion({
     this.idDepense = const Value.absent(),
     this.libelle = const Value.absent(),
     this.montant = const Value.absent(),
     this.dateDepense = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   DepensesCompanion.insert({
-    this.idDepense = const Value.absent(),
+    required String idDepense,
     required String libelle,
     required int montant,
     required DateTime dateDepense,
-  })  : libelle = Value(libelle),
+    this.rowid = const Value.absent(),
+  })  : idDepense = Value(idDepense),
+        libelle = Value(libelle),
         montant = Value(montant),
         dateDepense = Value(dateDepense);
   static Insertable<Depense> custom({
-    Expression<int>? idDepense,
+    Expression<String>? idDepense,
     Expression<String>? libelle,
     Expression<int>? montant,
     Expression<DateTime>? dateDepense,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (idDepense != null) 'id_depense': idDepense,
       if (libelle != null) 'libelle': libelle,
       if (montant != null) 'montant': montant,
       if (dateDepense != null) 'date_depense': dateDepense,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   DepensesCompanion copyWith(
-      {Value<int>? idDepense,
+      {Value<String>? idDepense,
       Value<String>? libelle,
       Value<int>? montant,
-      Value<DateTime>? dateDepense}) {
+      Value<DateTime>? dateDepense,
+      Value<int>? rowid}) {
     return DepensesCompanion(
       idDepense: idDepense ?? this.idDepense,
       libelle: libelle ?? this.libelle,
       montant: montant ?? this.montant,
       dateDepense: dateDepense ?? this.dateDepense,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -793,7 +820,7 @@ class DepensesCompanion extends UpdateCompanion<Depense> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (idDepense.present) {
-      map['id_depense'] = Variable<int>(idDepense.value);
+      map['id_depense'] = Variable<String>(idDepense.value);
     }
     if (libelle.present) {
       map['libelle'] = Variable<String>(libelle.value);
@@ -804,6 +831,9 @@ class DepensesCompanion extends UpdateCompanion<Depense> {
     if (dateDepense.present) {
       map['date_depense'] = Variable<DateTime>(dateDepense.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -813,7 +843,8 @@ class DepensesCompanion extends UpdateCompanion<Depense> {
           ..write('idDepense: $idDepense, ')
           ..write('libelle: $libelle, ')
           ..write('montant: $montant, ')
-          ..write('dateDepense: $dateDepense')
+          ..write('dateDepense: $dateDepense, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -828,13 +859,9 @@ class $PrelevementsTable extends Prelevements
   static const VerificationMeta _idPrelevementMeta =
       const VerificationMeta('idPrelevement');
   @override
-  late final GeneratedColumn<int> idPrelevement = GeneratedColumn<int>(
+  late final GeneratedColumn<String> idPrelevement = GeneratedColumn<String>(
       'id_prelevement', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _montantMeta =
       const VerificationMeta('montant');
   @override
@@ -864,6 +891,8 @@ class $PrelevementsTable extends Prelevements
           _idPrelevementMeta,
           idPrelevement.isAcceptableOrUnknown(
               data['id_prelevement']!, _idPrelevementMeta));
+    } else if (isInserting) {
+      context.missing(_idPrelevementMeta);
     }
     if (data.containsKey('montant')) {
       context.handle(_montantMeta,
@@ -883,13 +912,13 @@ class $PrelevementsTable extends Prelevements
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {idPrelevement};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
   Prelevement map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Prelevement(
       idPrelevement: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id_prelevement'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id_prelevement'])!,
       montant: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}montant'])!,
       datePrelevement: attachedDatabase.typeMapping.read(
@@ -904,7 +933,7 @@ class $PrelevementsTable extends Prelevements
 }
 
 class Prelevement extends DataClass implements Insertable<Prelevement> {
-  final int idPrelevement;
+  final String idPrelevement;
   final int montant;
   final DateTime datePrelevement;
   const Prelevement(
@@ -914,7 +943,7 @@ class Prelevement extends DataClass implements Insertable<Prelevement> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id_prelevement'] = Variable<int>(idPrelevement);
+    map['id_prelevement'] = Variable<String>(idPrelevement);
     map['montant'] = Variable<int>(montant);
     map['date_prelevement'] = Variable<DateTime>(datePrelevement);
     return map;
@@ -932,7 +961,7 @@ class Prelevement extends DataClass implements Insertable<Prelevement> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Prelevement(
-      idPrelevement: serializer.fromJson<int>(json['idPrelevement']),
+      idPrelevement: serializer.fromJson<String>(json['idPrelevement']),
       montant: serializer.fromJson<int>(json['montant']),
       datePrelevement: serializer.fromJson<DateTime>(json['datePrelevement']),
     );
@@ -941,14 +970,14 @@ class Prelevement extends DataClass implements Insertable<Prelevement> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'idPrelevement': serializer.toJson<int>(idPrelevement),
+      'idPrelevement': serializer.toJson<String>(idPrelevement),
       'montant': serializer.toJson<int>(montant),
       'datePrelevement': serializer.toJson<DateTime>(datePrelevement),
     };
   }
 
   Prelevement copyWith(
-          {int? idPrelevement, int? montant, DateTime? datePrelevement}) =>
+          {String? idPrelevement, int? montant, DateTime? datePrelevement}) =>
       Prelevement(
         idPrelevement: idPrelevement ?? this.idPrelevement,
         montant: montant ?? this.montant,
@@ -976,40 +1005,48 @@ class Prelevement extends DataClass implements Insertable<Prelevement> {
 }
 
 class PrelevementsCompanion extends UpdateCompanion<Prelevement> {
-  final Value<int> idPrelevement;
+  final Value<String> idPrelevement;
   final Value<int> montant;
   final Value<DateTime> datePrelevement;
+  final Value<int> rowid;
   const PrelevementsCompanion({
     this.idPrelevement = const Value.absent(),
     this.montant = const Value.absent(),
     this.datePrelevement = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   PrelevementsCompanion.insert({
-    this.idPrelevement = const Value.absent(),
+    required String idPrelevement,
     required int montant,
     required DateTime datePrelevement,
-  })  : montant = Value(montant),
+    this.rowid = const Value.absent(),
+  })  : idPrelevement = Value(idPrelevement),
+        montant = Value(montant),
         datePrelevement = Value(datePrelevement);
   static Insertable<Prelevement> custom({
-    Expression<int>? idPrelevement,
+    Expression<String>? idPrelevement,
     Expression<int>? montant,
     Expression<DateTime>? datePrelevement,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (idPrelevement != null) 'id_prelevement': idPrelevement,
       if (montant != null) 'montant': montant,
       if (datePrelevement != null) 'date_prelevement': datePrelevement,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   PrelevementsCompanion copyWith(
-      {Value<int>? idPrelevement,
+      {Value<String>? idPrelevement,
       Value<int>? montant,
-      Value<DateTime>? datePrelevement}) {
+      Value<DateTime>? datePrelevement,
+      Value<int>? rowid}) {
     return PrelevementsCompanion(
       idPrelevement: idPrelevement ?? this.idPrelevement,
       montant: montant ?? this.montant,
       datePrelevement: datePrelevement ?? this.datePrelevement,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -1017,13 +1054,16 @@ class PrelevementsCompanion extends UpdateCompanion<Prelevement> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (idPrelevement.present) {
-      map['id_prelevement'] = Variable<int>(idPrelevement.value);
+      map['id_prelevement'] = Variable<String>(idPrelevement.value);
     }
     if (montant.present) {
       map['montant'] = Variable<int>(montant.value);
     }
     if (datePrelevement.present) {
       map['date_prelevement'] = Variable<DateTime>(datePrelevement.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -1033,7 +1073,8 @@ class PrelevementsCompanion extends UpdateCompanion<Prelevement> {
     return (StringBuffer('PrelevementsCompanion(')
           ..write('idPrelevement: $idPrelevement, ')
           ..write('montant: $montant, ')
-          ..write('datePrelevement: $datePrelevement')
+          ..write('datePrelevement: $datePrelevement, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -1047,13 +1088,9 @@ class $RelevesTable extends Releves with TableInfo<$RelevesTable, Releve> {
   static const VerificationMeta _idReleveMeta =
       const VerificationMeta('idReleve');
   @override
-  late final GeneratedColumn<int> idReleve = GeneratedColumn<int>(
+  late final GeneratedColumn<String> idReleve = GeneratedColumn<String>(
       'id_releve', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _compteurMeta =
       const VerificationMeta('compteur');
   @override
@@ -1087,6 +1124,8 @@ class $RelevesTable extends Releves with TableInfo<$RelevesTable, Releve> {
     if (data.containsKey('id_releve')) {
       context.handle(_idReleveMeta,
           idReleve.isAcceptableOrUnknown(data['id_releve']!, _idReleveMeta));
+    } else if (isInserting) {
+      context.missing(_idReleveMeta);
     }
     if (data.containsKey('compteur')) {
       context.handle(_compteurMeta,
@@ -1114,13 +1153,13 @@ class $RelevesTable extends Releves with TableInfo<$RelevesTable, Releve> {
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {idReleve};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
   Releve map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Releve(
       idReleve: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id_releve'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}id_releve'])!,
       compteur: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}compteur'])!,
       sousCompteur: attachedDatabase.typeMapping
@@ -1137,7 +1176,7 @@ class $RelevesTable extends Releves with TableInfo<$RelevesTable, Releve> {
 }
 
 class Releve extends DataClass implements Insertable<Releve> {
-  final int idReleve;
+  final String idReleve;
   final double compteur;
   final double sousCompteur;
   final DateTime dateReleve;
@@ -1149,7 +1188,7 @@ class Releve extends DataClass implements Insertable<Releve> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id_releve'] = Variable<int>(idReleve);
+    map['id_releve'] = Variable<String>(idReleve);
     map['compteur'] = Variable<double>(compteur);
     map['sous_compteur'] = Variable<double>(sousCompteur);
     map['date_releve'] = Variable<DateTime>(dateReleve);
@@ -1169,7 +1208,7 @@ class Releve extends DataClass implements Insertable<Releve> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Releve(
-      idReleve: serializer.fromJson<int>(json['idReleve']),
+      idReleve: serializer.fromJson<String>(json['idReleve']),
       compteur: serializer.fromJson<double>(json['compteur']),
       sousCompteur: serializer.fromJson<double>(json['sousCompteur']),
       dateReleve: serializer.fromJson<DateTime>(json['dateReleve']),
@@ -1179,7 +1218,7 @@ class Releve extends DataClass implements Insertable<Releve> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'idReleve': serializer.toJson<int>(idReleve),
+      'idReleve': serializer.toJson<String>(idReleve),
       'compteur': serializer.toJson<double>(compteur),
       'sousCompteur': serializer.toJson<double>(sousCompteur),
       'dateReleve': serializer.toJson<DateTime>(dateReleve),
@@ -1187,7 +1226,7 @@ class Releve extends DataClass implements Insertable<Releve> {
   }
 
   Releve copyWith(
-          {int? idReleve,
+          {String? idReleve,
           double? compteur,
           double? sousCompteur,
           DateTime? dateReleve}) =>
@@ -1221,48 +1260,56 @@ class Releve extends DataClass implements Insertable<Releve> {
 }
 
 class RelevesCompanion extends UpdateCompanion<Releve> {
-  final Value<int> idReleve;
+  final Value<String> idReleve;
   final Value<double> compteur;
   final Value<double> sousCompteur;
   final Value<DateTime> dateReleve;
+  final Value<int> rowid;
   const RelevesCompanion({
     this.idReleve = const Value.absent(),
     this.compteur = const Value.absent(),
     this.sousCompteur = const Value.absent(),
     this.dateReleve = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   RelevesCompanion.insert({
-    this.idReleve = const Value.absent(),
+    required String idReleve,
     required double compteur,
     required double sousCompteur,
     required DateTime dateReleve,
-  })  : compteur = Value(compteur),
+    this.rowid = const Value.absent(),
+  })  : idReleve = Value(idReleve),
+        compteur = Value(compteur),
         sousCompteur = Value(sousCompteur),
         dateReleve = Value(dateReleve);
   static Insertable<Releve> custom({
-    Expression<int>? idReleve,
+    Expression<String>? idReleve,
     Expression<double>? compteur,
     Expression<double>? sousCompteur,
     Expression<DateTime>? dateReleve,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (idReleve != null) 'id_releve': idReleve,
       if (compteur != null) 'compteur': compteur,
       if (sousCompteur != null) 'sous_compteur': sousCompteur,
       if (dateReleve != null) 'date_releve': dateReleve,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   RelevesCompanion copyWith(
-      {Value<int>? idReleve,
+      {Value<String>? idReleve,
       Value<double>? compteur,
       Value<double>? sousCompteur,
-      Value<DateTime>? dateReleve}) {
+      Value<DateTime>? dateReleve,
+      Value<int>? rowid}) {
     return RelevesCompanion(
       idReleve: idReleve ?? this.idReleve,
       compteur: compteur ?? this.compteur,
       sousCompteur: sousCompteur ?? this.sousCompteur,
       dateReleve: dateReleve ?? this.dateReleve,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -1270,7 +1317,7 @@ class RelevesCompanion extends UpdateCompanion<Releve> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (idReleve.present) {
-      map['id_releve'] = Variable<int>(idReleve.value);
+      map['id_releve'] = Variable<String>(idReleve.value);
     }
     if (compteur.present) {
       map['compteur'] = Variable<double>(compteur.value);
@@ -1281,6 +1328,9 @@ class RelevesCompanion extends UpdateCompanion<Releve> {
     if (dateReleve.present) {
       map['date_releve'] = Variable<DateTime>(dateReleve.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -1290,7 +1340,8 @@ class RelevesCompanion extends UpdateCompanion<Releve> {
           ..write('idReleve: $idReleve, ')
           ..write('compteur: $compteur, ')
           ..write('sousCompteur: $sousCompteur, ')
-          ..write('dateReleve: $dateReleve')
+          ..write('dateReleve: $dateReleve, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }

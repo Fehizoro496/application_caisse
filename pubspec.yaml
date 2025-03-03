@@ -45,6 +45,8 @@ dependencies:
   path: ^1.8.3
   sqlite3: ^1.11.2
   to_csv: ^2.2.1
+  encrypt: ^5.0.3
+  uuid: ^4.2.2
   
 
 dev_dependencies:

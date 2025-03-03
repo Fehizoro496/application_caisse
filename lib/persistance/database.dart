@@ -6,47 +6,52 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart';
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
+import 'package:uuid/uuid.dart'; // Ajouter cette dépendance dans pubspec.yaml
 
 part 'database.g.dart';
 
+// Ajout de la fonction helper pour générer des UID
+String generateUid() => const Uuid().v4();
+
 class Depenses extends Table {
-  IntColumn get idDepense => integer().autoIncrement()();
+  TextColumn get idDepense => text()(); // Changed from IntColumn
   TextColumn get libelle => text()();
   IntColumn get montant => integer()();
   DateTimeColumn get dateDepense => dateTime()();
 }
 
 class Operations extends Table {
-  IntColumn get idOperation => integer().autoIncrement()();
+  TextColumn get idOperation => text()(); // Changed from IntColumn
   TextColumn get nomOperation => text()();
   IntColumn get prixOperation => integer()();
   IntColumn get quantiteOperation => integer()();
-  IntColumn get facture =>
-      integer().references(Factures, #idFacture).nullable()();
+  TextColumn get facture =>
+      text().references(Factures, #idFacture).nullable()(); // Changed reference
   DateTimeColumn get dateOperation => dateTime()();
 }
 
 class Factures extends Table {
-  IntColumn get idFacture => integer().autoIncrement()();
+  TextColumn get idFacture => text()(); // Changed from IntColumn
   TextColumn get client => text()();
   DateTimeColumn get dateFacture => dateTime()();
 }
 
 class ReglementsFacture extends Table {
-  IntColumn get idReglement => integer().autoIncrement()();
+  TextColumn get idReglement => text()(); // Changed from IntColumn
   IntColumn get montant => integer()();
   DateTimeColumn get dateReglement => dateTime()();
-  IntColumn get facture => integer().references(Factures, #idFacture)();
+  TextColumn get facture =>
+      text().references(Factures, #idFacture)(); // Changed reference
 }
 
 class Prelevements extends Table {
-  IntColumn get idPrelevement => integer().autoIncrement()();
+  TextColumn get idPrelevement => text()(); // Changed from IntColumn
   IntColumn get montant => integer()();
   DateTimeColumn get datePrelevement => dateTime()();
 }
 
 class Releves extends Table {
-  IntColumn get idReleve => integer().autoIncrement()();
+  TextColumn get idReleve => text()(); // Changed from IntColumn
   RealColumn get compteur => real()();
   RealColumn get sousCompteur => real()();
   DateTimeColumn get dateReleve => dateTime()();
@@ -56,8 +61,11 @@ class Releves extends Table {
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
+  // Ajout du constructeur fromFile
+  AppDatabase.fromFile(File file) : super(NativeDatabase(file));
+
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8; // Increment schema version
 
   @override
   MigrationStrategy get migration {

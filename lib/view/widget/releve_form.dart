@@ -1,6 +1,4 @@
-// import 'package:application_caisse/controller/prelevement_controller.dart';
 import 'package:application_caisse/controller/releve_controller.dart';
-// import 'package:application_caisse/model/prelevement_model.dart';
 import 'package:application_caisse/model/releve_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -31,6 +29,14 @@ class ReleveForm extends StatelessWidget {
                   if (!value.isNum) {
                     return 'Veuillez entrer un nombre!';
                   }
+                  if (double.parse(value) <
+                      double.parse(controller.sousCompteurController.text)) {
+                    return 'Valeur trop petite!';
+                  }
+                  if (double.parse(value) <
+                      controller.lastReleve.sousCompteur) {
+                    return 'Plus petite que la dernière!';
+                  }
                   return null;
                 },
                 controller: controller.compteurController,
@@ -48,6 +54,14 @@ class ReleveForm extends StatelessWidget {
                   }
                   if (!value.isNum) {
                     return 'Veuillez entrer un nombre!!';
+                  }
+                  if (double.parse(value) >
+                      double.parse(controller.compteurController.text)) {
+                    return 'Valeur trop grande!';
+                  }
+                  if (double.parse(value) <
+                      controller.lastReleve.sousCompteur) {
+                    return 'Plus petite que la dernière!';
                   }
                   return null;
                 },

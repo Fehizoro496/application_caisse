@@ -10,7 +10,7 @@ import '../model/operation_model.dart';
 
 class InvoiceService extends GetxService {
   List<OperationModel> listInvoiceLine = [];
-  List<int> listOperationsID = [];
+  List<String> listOperationsID = [];
   late String client;
   TextEditingController clientController = TextEditingController();
 
@@ -52,7 +52,8 @@ class InvoiceService extends GetxService {
     ));
   }
 
-  void invoiceProcess(List<OperationModel> listInvoiceLine, List<int> listID) {
+  void invoiceProcess(
+      List<OperationModel> listInvoiceLine, List<String> listID) {
     this.listInvoiceLine.addAll(listInvoiceLine);
     listOperationsID.addAll(listID);
 
@@ -82,8 +83,8 @@ class InvoiceService extends GetxService {
 
   Future<bool> _generateInvoicePdf() async {
     // print(listOperationsID);
-    int factureID = await dbService.saveFacture(client: client);
-    for (int id in listOperationsID) {
+    String factureID = await dbService.saveFacture(client: client);
+    for (String id in listOperationsID) {
       await dbService.assignFactureInOperation(id, factureID);
     }
 

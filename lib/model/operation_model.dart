@@ -1,5 +1,5 @@
 class OperationModel {
-  int? idOperation;
+  String? idOperation;
   late String nomOperation;
   late int quantiteOperation;
   late int prixOperation;

@@ -1,5 +1,5 @@
 class PrelevementModel {
-  int? idPrelevement;
+  String? idPrelevement;
   late int montant;
   DateTime? datePrelevement;
 

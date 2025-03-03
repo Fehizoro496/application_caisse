@@ -9,7 +9,7 @@ import '../service/db_service.dart';
 // import 'package:path_provider/path_provider.dart';
 
 class MainController extends GetxController {
-  List<int> listOperationsID = [];
+  List<String> listOperationsID = [];
   List<OperationModel> listInvoiceLine = [];
   TextEditingController designationController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
@@ -19,7 +19,7 @@ class MainController extends GetxController {
   final DBService dbService = Get.find();
   final InvoiceService invoiceService = Get.put(InvoiceService());
 
-  Future<int> _saveOperationToDatabase(OperationModel operation) {
+  Future<String> _saveOperationToDatabase(OperationModel operation) {
     return dbService.saveOperation(operation);
   }
 

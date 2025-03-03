@@ -1,5 +1,5 @@
 class ReleveModel {
-  int? idReleve;
+  String? idReleve;
   late double compteur;
   late double sousCompteur;
   DateTime? dateReleve;
