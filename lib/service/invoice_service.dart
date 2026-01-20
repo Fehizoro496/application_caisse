@@ -1,6 +1,7 @@
 import 'package:application_caisse/utils.dart';
 import 'package:application_caisse/theme/app_theme.dart';
 import 'package:application_caisse/view/widget/modern_card.dart';
+import 'package:application_caisse/view/widget/modern_snackbar.dart';
 import 'package:collection/collection.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -478,13 +479,9 @@ class InvoiceService extends GetxService {
     final file = File(
         "C:\\Users\\${_getWindowsUsername()}\\Desktop\\facture N°$factureID ${client.trim()}.pdf");
     await file.writeAsBytes(await pdf.save()).then((value) {
-      Get.snackbar(
+      ModernSnackBar.showSuccess(
         'PDF genere',
         'La facture a ete generee avec succes !',
-        snackPosition: SnackPosition.TOP,
-        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 70.0),
-        backgroundColor: const Color.fromARGB(200, 34, 197, 94),
-        colorText: Colors.white,
       );
     });
 

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:application_caisse/service/invoice_service.dart';
 import 'package:application_caisse/theme/app_theme.dart';
 import 'package:application_caisse/view/widget/modern_card.dart';
+import 'package:application_caisse/view/widget/modern_snackbar.dart';
 import 'package:get/get.dart';
 import '../model/operation_model.dart';
 import 'package:flutter/material.dart';
@@ -30,13 +31,9 @@ class MainController extends GetxController {
   }
 
   void _successSaveSnackbar() {
-    Get.snackbar(
+    ModernSnackBar.showSuccess(
       "Enregistrement Effectué",
       "Enregistrement effectué avec succès!",
-      snackPosition: SnackPosition.TOP,
-      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 70.0),
-      backgroundColor: const Color.fromARGB(175, 0, 225, 0),
-      colorText: Colors.white,
     );
   }
 
@@ -96,13 +93,9 @@ class MainController extends GetxController {
 
   void saveOperations() {
     if (listInvoiceLine.isEmpty) {
-      Get.snackbar(
+      ModernSnackBar.showError(
         'Erreur',
         'Aucune opération à enregistrer!',
-        snackPosition: SnackPosition.TOP,
-        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 70.0),
-        backgroundColor: const Color.fromARGB(175, 255, 0, 0),
-        colorText: Colors.white,
       );
     } else {
       _confirmDialog();

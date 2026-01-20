@@ -1,4 +1,5 @@
 import 'package:application_caisse/service/db_service.dart';
+import 'package:application_caisse/view/widget/modern_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../model/depense_model.dart';
@@ -33,24 +34,16 @@ class DepenseController extends GetxController {
   }
 
   void _successSaveSnackbar() {
-    Get.snackbar(
+    ModernSnackBar.showSuccess(
       "Enregistrement Effectué",
       "Enregistrement effectué avec succès!",
-      snackPosition: SnackPosition.TOP,
-      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 70.0),
-      backgroundColor: const Color.fromARGB(175, 0, 225, 0),
-      colorText: Colors.white,
     );
   }
 
   void _errorSaveSnackbar(String error) {
-    Get.snackbar(
+    ModernSnackBar.showError(
       "Error",
       error,
-      snackPosition: SnackPosition.TOP,
-      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 70.0),
-      backgroundColor: const Color.fromARGB(175, 255, 0, 0),
-      colorText: Colors.white,
     );
   }
 }

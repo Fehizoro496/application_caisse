@@ -1,5 +1,6 @@
 import 'package:application_caisse/model/releve_model.dart';
 import 'package:application_caisse/model/prelevement_model.dart';
+import 'package:application_caisse/view/widget/modern_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:application_caisse/persistance/database.dart';
@@ -46,9 +47,7 @@ class DBService extends GetxService {
     final String ref = await _generateFactureRef(client, factureDate);
 
     await database.into(database.factures).insert(FacturesCompanion.insert(
-        idFacture: ref,
-        client: client,
-        dateFacture: factureDate));
+        idFacture: ref, client: client, dateFacture: factureDate));
     return ref;
   }
 
@@ -161,22 +160,14 @@ class DBService extends GetxService {
       await backupFile.writeAsBytes(
           [...iv.bytes, ...encrypted.bytes] // Combine IV et données cryptées
           ).then((_) {
-        Get.snackbar(
+        ModernSnackBar.showSuccess(
           'Exportation effectuée',
           'Exportation effectuée avec succès!',
-          snackPosition: SnackPosition.TOP,
-          margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 70.0),
-          backgroundColor: const Color.fromARGB(175, 0, 225, 0),
-          colorText: Colors.white,
         );
       }).catchError((error) {
-        Get.snackbar(
+        ModernSnackBar.showError(
           "Erreur",
           "Une erreur est survenue lors de l'exportation!",
-          snackPosition: SnackPosition.TOP,
-          margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 70.0),
-          backgroundColor: const Color.fromARGB(175, 255, 0, 0),
-          colorText: Colors.white,
         );
       });
 
@@ -289,29 +280,18 @@ class DBService extends GetxService {
         }
       });
 
-      // Fermer et supprimer la base de données temporaire
-      await importedDb.close();
-      await tempDbFile.delete();
-
-      Get.snackbar(
+      Get.close(1);
+      ModernSnackBar.showSuccess(
         'Importation réussie',
         'Les données ont été fusionnées avec succès!',
-        snackPosition: SnackPosition.TOP,
-        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 70.0),
-        backgroundColor: const Color.fromARGB(175, 0, 225, 0),
-        colorText: Colors.white,
       );
 
       return true;
     } catch (e) {
       print('Error importing database: $e');
-      Get.snackbar(
+      ModernSnackBar.showError(
         'Erreur',
-        'Erreur lors de l\'importation des données',
-        snackPosition: SnackPosition.TOP,
-        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 70.0),
-        backgroundColor: const Color.fromARGB(175, 255, 0, 0),
-        colorText: Colors.white,
+        "Erreur lors de l'importation des données",
       );
       return false;
     }

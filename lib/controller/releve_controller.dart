@@ -1,5 +1,6 @@
 import 'package:application_caisse/model/releve_model.dart';
 import 'package:application_caisse/persistance/database.dart';
+import 'package:application_caisse/view/widget/modern_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../service/db_service.dart';
@@ -34,13 +35,9 @@ class ReleveController extends GetxController {
 
   void saveReleve(ReleveModel releve) {
     _saveReleveToDatabase(releve).then((value) {
-      Get.snackbar(
+      ModernSnackBar.showSuccess(
         "Relevé Effectué",
         "Relevé enregistré avec succès!",
-        snackPosition: SnackPosition.TOP,
-        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 70.0),
-        backgroundColor: const Color.fromARGB(175, 0, 225, 0),
-        colorText: Colors.white,
       );
       compteurController.clear();
       sousCompteurController.clear();
