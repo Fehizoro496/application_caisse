@@ -1,4 +1,6 @@
 import 'package:application_caisse/utils.dart';
+import 'package:application_caisse/theme/app_theme.dart';
+import 'package:application_caisse/view/widget/modern_card.dart';
 import 'package:collection/collection.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -29,18 +31,27 @@ class InvoiceService extends GetxService {
   }
 
   void _getClientName() {
-    Get.dialog(AlertDialog(
-      surfaceTintColor: const Color(0xFFFFFFFF),
-      title: const Text(
-        "Client Name",
-        textAlign: TextAlign.center,
-      ),
-      content: TextFormField(
-        controller: clientController,
-        decoration: const InputDecoration(label: Text("Nom du client")),
-      ),
-      actions: [
-        TextButton(
+    Get.dialog(
+      ModernDialog(
+        title: 'Nom du client',
+        subtitle: 'Entrez le nom pour la facture',
+        icon: Icons.person_rounded,
+        accentColor: AppColors.entrant,
+        content: ModernTextField(
+          controller: clientController,
+          label: 'Nom du client',
+          hint: 'Ex: Mr/Mme XYZ',
+          prefixIcon: Icons.badge_outlined,
+          accentColor: AppColors.entrant,
+        ),
+        actions: [
+          ModernDialogAction(
+            label: 'Annuler',
+            onPressed: () => Get.back(),
+          ),
+          ModernDialogAction(
+            label: 'Generer',
+            isPrimary: true,
             onPressed: () {
               client = clientController.text;
               _generateInvoicePdf().then((value) {
@@ -48,9 +59,10 @@ class InvoiceService extends GetxService {
                 Get.close(1);
               });
             },
-            child: const Text("OUI"))
-      ],
-    ));
+          ),
+        ],
+      ),
+    );
   }
 
   void invoiceProcess(
@@ -58,28 +70,35 @@ class InvoiceService extends GetxService {
     this.listInvoiceLine.addAll(listInvoiceLine);
     listOperationsID.addAll(listID);
 
-    Get.dialog(AlertDialog(
-      surfaceTintColor: const Color(0xFFFFFFFF),
-      title: const Text('Facturation', textAlign: TextAlign.center),
-      content: const Text('Voulez vous imprimer une facture?'),
-      actions: [
-        TextButton(
+    Get.dialog(
+      ModernDialog(
+        title: 'Facturation',
+        subtitle: 'Generation de facture PDF',
+        icon: Icons.receipt_long_rounded,
+        accentColor: AppColors.entrant,
+        content: const Text(
+          'Voulez-vous imprimer une facture?',
+          style: TextStyle(
+            fontSize: 14,
+            color: AppColors.textSecondary,
+          ),
+        ),
+        actions: [
+          ModernDialogAction(
+            label: 'Non',
+            onPressed: () => Get.close(1),
+          ),
+          ModernDialogAction(
+            label: 'Oui',
+            isPrimary: true,
             onPressed: () {
               Get.close(1);
               _getClientName();
             },
-            child: const Text("OUI")),
-        TextButton(
-          onPressed: () {
-            Get.close(1);
-          },
-          child: const Text(
-            "NON",
-            style: TextStyle(color: Colors.red),
           ),
-        ),
-      ],
-    ));
+        ],
+      ),
+    );
   }
 
   Future<bool> _generateInvoicePdf() async {
@@ -376,7 +395,7 @@ class InvoiceService extends GetxService {
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
-                      'MONTANT EN LETTRES',
+                      'Arrêté la présente facture à la somme de :',
                       style: pw.TextStyle(
                         fontSize: 9,
                         fontWeight: pw.FontWeight.bold,

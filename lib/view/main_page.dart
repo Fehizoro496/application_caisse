@@ -1,7 +1,7 @@
 import 'package:application_caisse/theme/app_theme.dart';
 import 'package:application_caisse/view/widget/input_form.dart';
 import 'package:application_caisse/view/widget/invoice_list_view.dart';
-import 'package:application_caisse/view/widget/my_drawer.dart';
+import 'package:application_caisse/view/widget/page_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controller/main_controller.dart';
@@ -15,220 +15,39 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      drawer: const MyDrawer(currentIndex: 0),
-      body: Column(
+    return ModernPageLayout(
+      title: 'Entrant',
+      subtitle: 'Gestion des entrees',
+      accentColor: AppColors.entrant,
+      icon: Icons.arrow_downward_rounded,
+      drawerIndex: 0,
+      actions: [
+        GestureDetector(
+          onTap: () => c.backupDatabaseToDesktop(),
+          child: const Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.file_download_outlined, size: 18),
+                SizedBox(width: AppSpacing.xs),
+                Text('Exporter', style: TextStyle(fontSize: 13)),
+              ],
+            ),
+          ),
+        ),
+      ],
+      child: const Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _ModernAppBar(
-            title: 'Entrant',
-            subtitle: 'Gestion des entrees',
-            color: AppColors.entrant,
-            icon: Icons.arrow_downward_rounded,
-            actions: [
-              _AppBarAction(
-                icon: Icons.file_download_outlined,
-                label: 'Exporter',
-                onPressed: () => c.dbService.backupDatabaseToDesktop(),
-              ),
-            ],
-          ),
-          Expanded(
-            child: Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppSpacing.xl),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    InputForm(),
-                    const SizedBox(width: AppSpacing.xl),
-                    invoiceListView(),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          InputForm(),
+          SizedBox(width: AppSpacing.xl),
+          InvoiceListView(),
         ],
-      ),
-    );
-  }
-}
-
-class _ModernAppBar extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final Color color;
-  final IconData icon;
-  final List<Widget>? actions;
-
-  const _ModernAppBar({
-    required this.title,
-    required this.subtitle,
-    required this.color,
-    required this.icon,
-    this.actions,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.md,
-        AppSpacing.lg,
-        AppSpacing.lg,
-        AppSpacing.lg,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        boxShadow: AppShadows.sm,
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          children: [
-            Builder(
-              builder: (context) => _MenuButton(
-                onPressed: () => Scaffold.of(context).openDrawer(),
-              ),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Container(
-              padding: const EdgeInsets.all(AppSpacing.sm + 2),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(AppRadius.md),
-              ),
-              child: Icon(icon, color: color, size: 22),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: AppColors.textMuted,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (actions != null) ...actions!,
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _MenuButton extends StatefulWidget {
-  final VoidCallback onPressed;
-
-  const _MenuButton({required this.onPressed});
-
-  @override
-  State<_MenuButton> createState() => _MenuButtonState();
-}
-
-class _MenuButtonState extends State<_MenuButton> {
-  bool _isHovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: GestureDetector(
-        onTap: widget.onPressed,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.all(AppSpacing.sm + 2),
-          decoration: BoxDecoration(
-            color: _isHovered ? AppColors.surfaceVariant : Colors.transparent,
-            borderRadius: BorderRadius.circular(AppRadius.md),
-          ),
-          child: Icon(
-            Icons.menu_rounded,
-            color: _isHovered ? AppColors.textPrimary : AppColors.textSecondary,
-            size: 24,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _AppBarAction extends StatefulWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onPressed;
-
-  const _AppBarAction({
-    required this.icon,
-    required this.label,
-    required this.onPressed,
-  });
-
-  @override
-  State<_AppBarAction> createState() => _AppBarActionState();
-}
-
-class _AppBarActionState extends State<_AppBarAction> {
-  bool _isHovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: GestureDetector(
-        onTap: widget.onPressed,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
-          ),
-          decoration: BoxDecoration(
-            color: _isHovered
-                ? AppColors.entrant.withValues(alpha: 0.1)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(AppRadius.md),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                widget.icon,
-                size: 18,
-                color: _isHovered ? AppColors.entrant : AppColors.textSecondary,
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              Text(
-                widget.label,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color:
-                      _isHovered ? AppColors.entrant : AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

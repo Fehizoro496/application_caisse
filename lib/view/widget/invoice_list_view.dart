@@ -5,138 +5,142 @@ import 'package:flutter/material.dart';
 import 'package:application_caisse/controller/main_controller.dart';
 import 'package:get/get.dart';
 
-Widget invoiceListView() {
-  return GetBuilder<MainController>(builder: (context) {
-    MainController controller = Get.find<MainController>();
-    return Container(
-      width: 420,
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: AppShadows.md,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Header
-          Container(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            decoration: BoxDecoration(
-              color: AppColors.entrant.withValues(alpha: 0.05),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(AppRadius.lg),
+class InvoiceListView extends StatelessWidget {
+  const InvoiceListView({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<MainController>(builder: (context) {
+      final controller = Get.find<MainController>();
+      return Container(
+        width: 420,
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+          boxShadow: AppShadows.md,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              decoration: BoxDecoration(
+                color: AppColors.entrant.withValues(alpha: 0.05),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(AppRadius.lg),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(AppSpacing.sm + 2),
+                    decoration: BoxDecoration(
+                      color: AppColors.entrant.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                    ),
+                    child: const Icon(
+                      Icons.receipt_long_rounded,
+                      color: AppColors.entrant,
+                      size: 22,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Facture en cours',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        Text(
+                          '${controller.listInvoiceLine.length} article(s)',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textMuted,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.sm + 2),
-                  decoration: BoxDecoration(
-                    color: AppColors.entrant.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppRadius.md),
-                  ),
-                  child: const Icon(
-                    Icons.receipt_long_rounded,
-                    color: AppColors.entrant,
-                    size: 22,
-                  ),
+
+            // List
+            SizedBox(
+              height: 300,
+              child: controller.listInvoiceLine.isEmpty
+                  ? _EmptyState()
+                  : ListView.separated(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                        vertical: AppSpacing.md,
+                      ),
+                      itemCount: controller.listInvoiceLine.length,
+                      separatorBuilder: (_, __) =>
+                          const SizedBox(height: AppSpacing.sm),
+                      itemBuilder: (context, index) => _InvoiceLineItem(
+                        index: index,
+                        operation: controller.listInvoiceLine[index],
+                        controller: controller,
+                      ),
+                    ),
+            ),
+
+            // Footer with total
+            Container(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              decoration: BoxDecoration(
+                color: AppColors.entrant.withValues(alpha: 0.08),
+                borderRadius: const BorderRadius.vertical(
+                  bottom: Radius.circular(AppRadius.lg),
                 ),
-                const SizedBox(width: AppSpacing.md),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        'Facture en cours',
+                        'Total',
                         style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
                           color: AppColors.textPrimary,
                         ),
                       ),
                       Text(
-                        '${controller.listInvoiceLine.length} article(s)',
+                        '${formatNumber(controller.total)} Ar',
                         style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textMuted,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.entrant,
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          ),
-
-          // List
-          Container(
-            constraints: const BoxConstraints(maxHeight: 400, minHeight: 200),
-            child: controller.listInvoiceLine.isEmpty
-                ? _EmptyState()
-                : ListView.separated(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md,
-                      vertical: AppSpacing.md,
-                    ),
-                    shrinkWrap: true,
-                    itemCount: controller.listInvoiceLine.length,
-                    separatorBuilder: (_, __) =>
-                        const SizedBox(height: AppSpacing.sm),
-                    itemBuilder: (context, index) => _InvoiceLineItem(
-                      index: index,
-                      operation: controller.listInvoiceLine[index],
-                      controller: controller,
-                    ),
+                  const SizedBox(height: AppSpacing.md),
+                  ModernButton(
+                    label: 'Enregistrer la facture',
+                    icon: Icons.save_rounded,
+                    color: AppColors.entrant,
+                    isFullWidth: true,
+                    onPressed: () => controller.saveOperations(),
                   ),
-          ),
-
-          // Footer with total
-          Container(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            decoration: BoxDecoration(
-              color: AppColors.entrant.withValues(alpha: 0.08),
-              borderRadius: const BorderRadius.vertical(
-                bottom: Radius.circular(AppRadius.lg),
+                ],
               ),
             ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Total',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    Text(
-                      '${formatNumber(controller.total)} Ar',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.entrant,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.md),
-                ModernButton(
-                  label: 'Enregistrer la facture',
-                  icon: Icons.save_rounded,
-                  color: AppColors.entrant,
-                  isFullWidth: true,
-                  onPressed: () => controller.saveOperations(),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  });
+          ],
+        ),
+      );
+    });
+  }
 }
 
 class _EmptyState extends StatelessWidget {

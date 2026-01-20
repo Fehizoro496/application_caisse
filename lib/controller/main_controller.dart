@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:application_caisse/service/invoice_service.dart';
+import 'package:application_caisse/theme/app_theme.dart';
+import 'package:application_caisse/view/widget/modern_card.dart';
 import 'package:get/get.dart';
 import '../model/operation_model.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +40,10 @@ class MainController extends GetxController {
     );
   }
 
+  void backupDatabaseToDesktop() {
+    dbService.backupDatabaseToDesktop();
+  }
+
   Future<bool> fillIDList() async {
     bool out = true;
     for (var operation in listInvoiceLine) {
@@ -52,12 +58,27 @@ class MainController extends GetxController {
   }
 
   void _confirmDialog() {
-    Get.dialog(AlertDialog(
-      surfaceTintColor: const Color(0xFFFFFFFF),
-      title: const Text('CONFIRMATION', textAlign: TextAlign.center),
-      content: const Text('Voulez vous confirmer cet enregistrement?'),
-      actions: [
-        TextButton(
+    Get.dialog(
+      ModernDialog(
+        title: 'Confirmation',
+        subtitle: 'Enregistrement de la facture',
+        icon: Icons.save_rounded,
+        accentColor: AppColors.entrant,
+        content: const Text(
+          'Voulez-vous confirmer cet enregistrement?',
+          style: TextStyle(
+            fontSize: 14,
+            color: AppColors.textSecondary,
+          ),
+        ),
+        actions: [
+          ModernDialogAction(
+            label: 'Annuler',
+            onPressed: () => Get.back(),
+          ),
+          ModernDialogAction(
+            label: 'Confirmer',
+            isPrimary: true,
             onPressed: () async {
               Get.back();
               await fillIDList().then((value) {
@@ -67,17 +88,10 @@ class MainController extends GetxController {
                 _successSaveSnackbar();
               });
             },
-            child: const Text('OUI')),
-        TextButton(
-            onPressed: () {
-              Get.back();
-            },
-            child: const Text(
-              'NON',
-              style: TextStyle(color: Colors.red),
-            ))
-      ],
-    ));
+          ),
+        ],
+      ),
+    );
   }
 
   void saveOperations() {
