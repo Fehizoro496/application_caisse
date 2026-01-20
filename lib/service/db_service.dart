@@ -42,12 +42,42 @@ class DBService extends GetxService {
   }
 
   Future<String> saveFacture({required String client, DateTime? date}) async {
-    final String id = generateUid();
+    final factureDate = date ?? DateTime.now();
+    final String ref = await _generateFactureRef(client, factureDate);
+
     await database.into(database.factures).insert(FacturesCompanion.insert(
-        idFacture: id,
+        idFacture: ref,
         client: client,
-        dateFacture: date ?? DateTime.timestamp()));
-    return id;
+        dateFacture: factureDate));
+    return ref;
+  }
+
+  Future<String> _generateFactureRef(String client, DateTime date) async {
+    // Extraire les initiales du client (max 3 lettres)
+    final initials = client
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((w) => w.isNotEmpty)
+        .map((w) => w[0].toUpperCase())
+        .take(3)
+        .join();
+
+    // Utiliser 'X' si pas d'initiales
+    final clientCode = initials.isEmpty ? 'X' : initials;
+
+    // Formater la date en AAAAMMJJ
+    final dateStr =
+        '${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}';
+
+    // Compter les factures existantes avec ce prefixe
+    final prefix = '$clientCode-$dateStr';
+    final existing = await (database.select(database.factures)
+          ..where((t) => t.idFacture.like('$prefix%')))
+        .get();
+
+    final sequence = (existing.length + 1).toString().padLeft(3, '0');
+
+    return '$prefix-$sequence';
   }
 
   Future<Operation?> getOperationById(String id) {

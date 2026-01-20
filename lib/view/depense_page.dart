@@ -1,10 +1,11 @@
-import 'package:application_caisse/view/widget/my_drawer.dart';
+import 'package:application_caisse/theme/app_theme.dart';
+import 'package:application_caisse/view/widget/modern_card.dart';
+import 'package:application_caisse/view/widget/page_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:application_caisse/controller/depense_controller.dart';
 
 class DepensePage extends StatelessWidget {
-  final String title = "Sortant";
   final _formKey = GlobalKey<FormState>();
   late final DepenseController controller;
 
@@ -14,82 +15,68 @@ class DepensePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.red,
-        foregroundColor: Colors.white,
-        title: Text(title),
-      ),
-      drawer: const MyDrawer(),
-      body: Container(
-        color: Colors.grey[100],
-        child: Center(
-          child: Container(
-              width: 350,
-              height: 350,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                color: Colors.white,
+    return ModernPageLayout(
+      title: 'Sortant',
+      subtitle: 'Enregistrement des depenses',
+      accentColor: AppColors.sortant,
+      icon: Icons.arrow_upward_rounded,
+      drawerIndex: 1,
+      child: ModernFormCard(
+        title: 'Nouvelle depense',
+        subtitle: 'Enregistrer une sortie de caisse',
+        icon: Icons.remove_circle_outline_rounded,
+        accentColor: AppColors.sortant,
+        width: 400,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ModernTextField(
+                controller: controller.libelleController,
+                label: 'Libelle',
+                hint: 'Ex: Achat fournitures',
+                prefixIcon: Icons.description_outlined,
+                accentColor: AppColors.sortant,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Ce champ doit etre rempli';
+                  }
+                  return null;
+                },
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(36.0),
-                child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextFormField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Ce champ doit être rempli!';
-                            }
-                            return null;
-                          },
-                          controller: controller.libelleController,
-                          decoration: const InputDecoration(
-                            labelText: 'Libellé',
-                            border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8.0))),
-                          ),
-                        ),
-                        const SizedBox(height: 20.0),
-                        TextFormField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Ce champ doit être rempli!';
-                            }
-                            if (!value.isNum) {
-                              return 'Le montant doit être un nombre!';
-                            }
-                            return null;
-                          },
-                          controller: controller.montantController,
-                          decoration: const InputDecoration(
-                            labelText: 'Montant',
-                            border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8.0))),
-                          ),
-                        ),
-                        const SizedBox(height: 30.0),
-                        ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateColor.resolveWith(
-                                  (states) => Colors.redAccent),
-                              foregroundColor: MaterialStateColor.resolveWith(
-                                  (states) => Colors.white),
-                            ),
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                controller.handleSubmit();
-                              }
-                            },
-                            child: Text("Enregistrer".toUpperCase()))
-                      ],
-                    )),
-              )),
+              const SizedBox(height: AppSpacing.md),
+              ModernTextField(
+                controller: controller.montantController,
+                label: 'Montant',
+                hint: 'Ex: 50000',
+                prefixIcon: Icons.payments_outlined,
+                accentColor: AppColors.sortant,
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Ce champ doit etre rempli';
+                  }
+                  if (!value.isNum) {
+                    return 'Le montant doit etre un nombre';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              ModernButton(
+                label: 'Enregistrer',
+                icon: Icons.save_rounded,
+                color: AppColors.sortant,
+                isFullWidth: true,
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    controller.handleSubmit();
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,51 +1,46 @@
 import 'package:application_caisse/theme/app_theme.dart';
-import 'package:application_caisse/view/widget/input_form.dart';
-import 'package:application_caisse/view/widget/invoice_list_view.dart';
 import 'package:application_caisse/view/widget/my_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../controller/main_controller.dart';
 
-class MainPage extends StatelessWidget {
-  late final MainController c;
+class ModernPageLayout extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final Color accentColor;
+  final IconData icon;
+  final int drawerIndex;
+  final Widget child;
+  final List<Widget>? actions;
 
-  MainPage({super.key}) {
-    c = Get.put(MainController());
-  }
+  const ModernPageLayout({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.accentColor,
+    required this.icon,
+    required this.drawerIndex,
+    required this.child,
+    this.actions,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      drawer: const MyDrawer(currentIndex: 0),
+      drawer: MyDrawer(currentIndex: drawerIndex),
       body: Column(
         children: [
           _ModernAppBar(
-            title: 'Entrant',
-            subtitle: 'Gestion des entrees',
-            color: AppColors.entrant,
-            icon: Icons.arrow_downward_rounded,
-            actions: [
-              _AppBarAction(
-                icon: Icons.file_download_outlined,
-                label: 'Exporter',
-                onPressed: () => c.dbService.backupDatabaseToDesktop(),
-              ),
-            ],
+            title: title,
+            subtitle: subtitle,
+            color: accentColor,
+            icon: icon,
+            actions: actions,
           ),
           Expanded(
             child: Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(AppSpacing.xl),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    InputForm(),
-                    const SizedBox(width: AppSpacing.xl),
-                    invoiceListView(),
-                  ],
-                ),
+                child: child,
               ),
             ),
           ),
@@ -164,69 +159,6 @@ class _MenuButtonState extends State<_MenuButton> {
             Icons.menu_rounded,
             color: _isHovered ? AppColors.textPrimary : AppColors.textSecondary,
             size: 24,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _AppBarAction extends StatefulWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onPressed;
-
-  const _AppBarAction({
-    required this.icon,
-    required this.label,
-    required this.onPressed,
-  });
-
-  @override
-  State<_AppBarAction> createState() => _AppBarActionState();
-}
-
-class _AppBarActionState extends State<_AppBarAction> {
-  bool _isHovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: GestureDetector(
-        onTap: widget.onPressed,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
-          ),
-          decoration: BoxDecoration(
-            color: _isHovered
-                ? AppColors.entrant.withValues(alpha: 0.1)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(AppRadius.md),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                widget.icon,
-                size: 18,
-                color: _isHovered ? AppColors.entrant : AppColors.textSecondary,
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              Text(
-                widget.label,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color:
-                      _isHovered ? AppColors.entrant : AppColors.textSecondary,
-                ),
-              ),
-            ],
           ),
         ),
       ),

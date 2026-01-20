@@ -1,6 +1,7 @@
+import 'package:application_caisse/theme/app_theme.dart';
+import 'package:application_caisse/view/widget/page_layout.dart';
 import 'package:application_caisse/view/widget/releve_list_view.dart';
 import 'package:application_caisse/view/widget/releve_form.dart';
-import 'package:application_caisse/view/widget/my_drawer.dart';
 import 'package:flutter/material.dart';
 
 class RelevePage extends StatelessWidget {
@@ -8,27 +9,20 @@ class RelevePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Relevé'),
-        backgroundColor: Colors.amber,
-        foregroundColor: Colors.white,
-      ),
-      drawer: const MyDrawer(),
-      body: Container(
-        color: Colors.grey[100],
-        child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              // Input form widget
-              ReleveForm(),
-              // Invoice list view widget
-              releveListView(),
-            ],
-          ),
-        ),
+    return ModernPageLayout(
+      title: 'Releve',
+      subtitle: 'Gestion des compteurs',
+      accentColor: AppColors.releve,
+      icon: Icons.speed_rounded,
+      drawerIndex: 3,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ReleveForm(),
+          const SizedBox(width: AppSpacing.xl),
+          releveListView(),
+        ],
       ),
     );
   }

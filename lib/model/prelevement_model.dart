@@ -13,9 +13,9 @@ class PrelevementModel {
           datePrelevement: json['datePrelevement']);
 
   Map<String, dynamic> toJson() => {
-        'idFacture': idPrelevement,
+        'idPrelevement': idPrelevement,
         'client': montant,
-        'dateFacture': datePrelevement
+        'datePrelevement': datePrelevement
       };
 
   @override

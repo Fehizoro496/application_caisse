@@ -1,4 +1,4 @@
-import 'package:application_caisse/format_number.dart';
+import 'package:application_caisse/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:application_caisse/model/operation_model.dart';
 import 'package:application_caisse/controller/main_controller.dart';

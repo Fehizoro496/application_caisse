@@ -17,7 +17,7 @@ class ReleveModel {
       dateReleve: json['dateReleve']);
 
   Map<String, dynamic> toJson() => {
-        'idFacture': idReleve,
+        'idReleve': idReleve,
         'compteur': compteur,
         'sous-compteur': sousCompteur,
         'dateFacture': dateReleve

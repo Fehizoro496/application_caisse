@@ -1,35 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import './service/db_service.dart';
+import './theme/app_theme.dart';
 import 'view/main_page.dart';
 
-// Main function to initialize the app
 void main() async {
-  // Ensure widgets are initialized
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize the DBService
+  await initializeDateFormatting('fr_FR', null);
+  Intl.defaultLocale = 'fr_FR';
   await Get.putAsync(() => DBService().init());
-
-  // Run the app
   runApp(const MyApp());
 }
 
-// Main application widget
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        primaryColor: Colors.blue,
-        useMaterial3: true,
-      ),
+      title: 'Application Caisse',
+      theme: AppTheme.lightTheme,
       home: MainPage(),
       debugShowCheckedModeBanner: false,
+      locale: const Locale('fr', 'FR'),
+      fallbackLocale: const Locale('fr', 'FR'),
     );
   }
 }
