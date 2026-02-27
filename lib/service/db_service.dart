@@ -136,17 +136,14 @@ class DBService extends GetxService {
       final dbFolder = await getApplicationCacheDirectory();
       final dbFile = File(p.join(dbFolder.path, 'caisse_database.sqlite'));
 
-      // Lire le contenu du fichier
       final List<int> databaseContent = await dbFile.readAsBytes();
 
-      // Crypter le contenu
-      final key = encrypt.Key.fromLength(32); // Génère une clé de 32 bytes
-      final iv = encrypt.IV.fromLength(16); // Vecteur d'initialisation
+      final key = encrypt.Key.fromSecureRandom(32);
+      final iv = encrypt.IV.fromSecureRandom(16);
       final encrypter = encrypt.Encrypter(encrypt.AES(key));
 
       final encrypted = encrypter.encryptBytes(databaseContent, iv: iv);
 
-      // Créer le fichier de backup
       final desktopPath =
           "C:\\Users\\${Platform.environment['USERNAME']}\\Desktop";
       final timestamp = DateTime.now()
@@ -156,19 +153,14 @@ class DBService extends GetxService {
           .first;
       final backupFile = File('$desktopPath\\backup_caisse_$timestamp.enc');
 
-      // Sauvegarder le contenu crypté
+      // Format : [16 bytes IV][32 bytes KEY][données cryptées]
       await backupFile.writeAsBytes(
-          [...iv.bytes, ...encrypted.bytes] // Combine IV et données cryptées
-          ).then((_) {
+          [...iv.bytes, ...key.bytes, ...encrypted.bytes]).then((_) {
         ModernSnackBar.showSuccess(
-          'Exportation effectuée',
-          'Exportation effectuée avec succès!',
-        );
+            'Exportation effectuée', 'Exportation effectuée avec succès!');
       }).catchError((error) {
         ModernSnackBar.showError(
-          "Erreur",
-          "Une erreur est survenue lors de l'exportation!",
-        );
+            "Erreur", "Une erreur est survenue lors de l'exportation!");
       });
 
       return true;
