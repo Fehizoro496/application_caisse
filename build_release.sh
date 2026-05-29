@@ -14,7 +14,22 @@ echo
 
 # ─── Étape 1 : Flutter build ────────────────────────────────────────────────
 echo -e "[1/2] Flutter build windows --release..."
-flutter build windows --release
+
+# Détection de flutter ou fvm
+FLUTTER_CMD="flutter"
+if ! command -v flutter &> /dev/null; then
+    if command -v fvm &> /dev/null; then
+        echo -e "${CYAN}Flutter non trouvé, utilisation de fvm...${NC}"
+        FLUTTER_CMD="fvm flutter"
+    else
+        echo -e "${RED}ERREUR : Ni flutter ni fvm ne sont installés.${NC}"
+        exit 1
+    fi
+fi
+
+echo -e "Utilisation de: ${CYAN}$FLUTTER_CMD${NC}"
+echo
+$FLUTTER_CMD build windows --release
 echo -e "${GREEN}Build Flutter OK.${NC}"
 echo
 
