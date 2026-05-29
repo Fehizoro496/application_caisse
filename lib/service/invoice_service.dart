@@ -68,6 +68,10 @@ class InvoiceService extends GetxService {
 
   void invoiceProcess(
       List<OperationModel> listInvoiceLine, List<String> listID) {
+    // Vider les listes avant d'ajouter les nouvelles données
+    this.listInvoiceLine.clear();
+    listOperationsID.clear();
+
     this.listInvoiceLine.addAll(listInvoiceLine);
     listOperationsID.addAll(listID);
 
